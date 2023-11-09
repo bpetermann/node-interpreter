@@ -1,9 +1,13 @@
 {
   "name": "node-interpreter",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./app/index.js",
   "scripts": {
-    "start": "node index.js"
+    "build": "tsc",
+    "start": "node ./app/index.js",
+    "fresh": "npm i && npm run build",
+    "build-start": "npm run build && npm start",
+    "test": "jest"
   },
   "author": "bpetermann",
   "license": "MIT",
