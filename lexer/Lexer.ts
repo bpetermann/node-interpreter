@@ -19,19 +19,19 @@ export default class Lexer {
     while (this._readPosition < this.input.length) {
       this.nextToken();
     }
-    this._tokens.push({ type: TokenType.EOF, literal: TokenType.EOF });
+    this._tokens.push({ type: TokenType.EOF, literal: '' });
     return this._tokens;
   }
 
-  private isLetter(char: string) {
+  private isLetter(char: string): boolean {
     return 'abcdefghijklmnopqrstuvwxyz_'.includes(char.toLowerCase());
   }
 
-  private isDigit(char: string) {
+  private isDigit(char: string): boolean {
     return '0123456789'.includes(char);
   }
 
-  private readIdentifier() {
+  private readIdentifier(): Token {
     let pos = this._position;
     while (this.isLetter(this.input[pos])) {
       pos += 1;
@@ -43,7 +43,7 @@ export default class Lexer {
     };
   }
 
-  private readNumber() {
+  private readNumber(): Token {
     let pos = this._position;
     while (this.isDigit(this.input[pos])) {
       pos += 1;

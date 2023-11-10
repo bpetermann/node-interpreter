@@ -86,7 +86,7 @@ it('should convert source code', () => {
     { type: TokenType.IDENT, literal: 'ten' },
     { type: TokenType.RPAREN, literal: ')' },
     { type: TokenType.SEMICOLON, literal: ';' },
-    { type: TokenType.EOF, literal: 'EOF' },
+    { type: TokenType.EOF, literal: '' },
   ];
 
   expect(actual).toEqual(expected);
