@@ -1,10 +1,14 @@
-import { Lexer, TokenType } from '../lexer/Lexer';
+import { TokenType, Lexer } from '../lexer';
 import { expect } from '@jest/globals';
 
 it('should create an array of tokens', () => {
-  const lexer = Lexer.getInstance('=+(){},;');
+  const lexer = Lexer.getInstance();
 
-  const actual = lexer.getTokens();
+  lexer.input = '=+(){},;';
+
+  lexer.readChar();
+
+  const actual = lexer.tokens;
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -22,9 +26,11 @@ it('should create an array of tokens', () => {
 it('should create only valid tokens', () => {
   const validTypes = Object.values(TokenType);
 
-  const lexer = Lexer.getInstance('=+(){},;');
+  const lexer = Lexer.getInstance();
+  lexer.input = '=+(){},;';
+  lexer.readChar();
 
-  const actual = lexer.getTokens();
+  const actual = lexer.tokens;
 
   expect(Array.isArray(actual)).toBe(true);
 
