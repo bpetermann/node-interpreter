@@ -24,15 +24,13 @@ export default class Lexer {
     return Lexer.instance;
   }
 
-  public set input(input: string) {
+  public new(input: string): Token[] {
     this._input = input;
-  }
-
-  public get tokens(): Token[] {
+    this.readChar();
     return this._tokens;
   }
 
-  readChar() {
+  private readChar(): void {
     if (this._readPosition >= this._input.length) {
       this._char = null;
     } else {
@@ -43,7 +41,7 @@ export default class Lexer {
     this.nextToken();
   }
 
-  nextToken() {
+  private nextToken(): void {
     switch (this._char) {
       case TokenType.ASSIGN:
         this._tokens.push({ type: TokenType.ASSIGN, literal: this._char });
@@ -70,7 +68,7 @@ export default class Lexer {
         this._tokens.push({ type: TokenType.RBRACE, literal: this._char });
         break;
       default:
-        this._tokens.push({ type: TokenType.EOF, literal: null });
+        this._tokens.push({ type: TokenType.EOF, literal: '' });
         return;
     }
 
