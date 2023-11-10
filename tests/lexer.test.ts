@@ -2,8 +2,8 @@ import { TokenType, Lexer } from '../lexer';
 import { expect } from '@jest/globals';
 
 it('should create an array of tokens', () => {
-  const lexer = Lexer.getInstance();
-  const actual = lexer.new('=+(){},;');
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.start();
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -21,8 +21,8 @@ it('should create an array of tokens', () => {
 it('should create only valid tokens', () => {
   const validTypes = Object.values(TokenType);
 
-  const lexer = Lexer.getInstance();
-  const actual = lexer.new('=+(){},;');
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.start();
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -34,18 +34,20 @@ it('should create only valid tokens', () => {
   ).toBe(true);
 });
 
-it('should convert monkey source code', () => {
-  const lexer = Lexer.getInstance();
-  const actual = lexer.new(
-    `
-    let five = 5;
-    let ten = 10;
-    
-    let add = fn(x, y) {
-      x + y;
-  }
-  `
-  );
+it('should convert source code', () => {
+  const lexer = new Lexer(`
+  let five = 5;
+  let ten = 10;
+  
+  let add = fn(x, y) {
+    x + y;
+  };
+
+  let result = add(five, ten);
+  `);
+  const actual = lexer.start();
+
+  console.log(actual);
 
   const expected = [
     { type: TokenType.LET, literal: 'let' },
@@ -67,7 +69,7 @@ it('should convert monkey source code', () => {
     { type: TokenType.COMMA, literal: ',' },
     { type: TokenType.IDENT, literal: 'y' },
     { type: TokenType.RPAREN, literal: ')' },
-    { type: TokenType.LBRACE, literal: '{ type: ' },
+    { type: TokenType.LBRACE, literal: '{' },
     { type: TokenType.IDENT, literal: 'x' },
     { type: TokenType.PLUS, literal: '+' },
     { type: TokenType.IDENT, literal: 'y' },
@@ -84,7 +86,7 @@ it('should convert monkey source code', () => {
     { type: TokenType.IDENT, literal: 'ten' },
     { type: TokenType.RPAREN, literal: ')' },
     { type: TokenType.SEMICOLON, literal: ';' },
-    { type: TokenType.EOF, literal: '' },
+    { type: TokenType.EOF, literal: 'EOF' },
   ];
 
   expect(actual).toEqual(expected);
