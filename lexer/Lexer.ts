@@ -56,11 +56,7 @@ export default class Lexer {
   }
 
   private readChar(): void {
-    if (this._readPosition >= this.input.length) {
-      this._char = null;
-    } else {
-      this._char = this.input[this._readPosition];
-    }
+    this._char = this.input[this._readPosition];
     this._position = this._readPosition;
     this._readPosition += 1;
   }
