@@ -13,6 +13,20 @@ enum TokenType {
   RBRACE = '}',
   FUNCTION = 'FUNCTION',
   LET = 'LET',
+  BANG = '!',
+  MINUS = '-',
+  SLASH = '/',
+  ASTERISK = '*',
+  LT = '<',
+  GT = '>',
 }
 
+enum WhiteSpace {
+  WHITESPACE = ' ',
+  TAB = '\t',
+  NEWLINE = '\n',
+  CARRIAGE_RETURN = '\r',
+}
+
+export { WhiteSpace };
 export default TokenType;

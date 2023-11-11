@@ -71,6 +71,8 @@ it('should convert source code', () => {
   };
 
   let result = add(five, ten);
+  !-/*5;
+  5 < 10 > 5;
   `);
   const actual = lexer.start();
 
@@ -110,6 +112,18 @@ it('should convert source code', () => {
     { type: TokenType.COMMA, literal: ',' },
     { type: TokenType.IDENT, literal: 'ten' },
     { type: TokenType.RPAREN, literal: ')' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.BANG, literal: '!' },
+    { type: TokenType.MINUS, literal: '-' },
+    { type: TokenType.SLASH, literal: '/' },
+    { type: TokenType.ASTERISK, literal: '*' },
+    { type: TokenType.INT, literal: '5' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.INT, literal: '5' },
+    { type: TokenType.LT, literal: '<' },
+    { type: TokenType.INT, literal: '10' },
+    { type: TokenType.GT, literal: '>' },
+    { type: TokenType.INT, literal: '5' },
     { type: TokenType.SEMICOLON, literal: ';' },
     { type: TokenType.EOF, literal: '' },
   ];

@@ -1,4 +1,5 @@
 import { lookUpToken } from './token';
+import { WhiteSpace } from './tokenType';
 import TokenType from './tokenType';
 import Token from './token';
 export default class Lexer {
@@ -63,10 +64,10 @@ export default class Lexer {
 
   private nextToken(): void {
     switch (this._char) {
-      case ' ':
-      case '\t':
-      case '\n':
-      case '\r':
+      case WhiteSpace.WHITESPACE:
+      case WhiteSpace.TAB:
+      case WhiteSpace.NEWLINE:
+      case WhiteSpace.CARRIAGE_RETURN:
         break;
       case TokenType.ASSIGN:
       case TokenType.SEMICOLON:
@@ -76,6 +77,12 @@ export default class Lexer {
       case TokenType.PLUS:
       case TokenType.LBRACE:
       case TokenType.RBRACE:
+      case TokenType.BANG:
+      case TokenType.MINUS:
+      case TokenType.SLASH:
+      case TokenType.ASTERISK:
+      case TokenType.LT:
+      case TokenType.GT:
         this._tokens.push({
           type: this._char as TokenType,
           literal: this._char,
