@@ -34,6 +34,33 @@ it('should create only valid tokens', () => {
   ).toBe(true);
 });
 
+it('should create only valid tokens', () => {
+  const validTypes = Object.values(TokenType);
+
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.start();
+
+  expect(Array.isArray(actual)).toBe(true);
+
+  const expected = [
+    { type: TokenType.ASSIGN, literal: '=' },
+    { type: TokenType.PLUS, literal: '+' },
+    { type: TokenType.LPAREN, literal: '(' },
+    { type: TokenType.RPAREN, literal: ')' },
+    { type: TokenType.LBRACE, literal: '{' },
+    { type: TokenType.RBRACE, literal: '}' },
+    { type: TokenType.COMMA, literal: ',' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+  ];
+
+  expect(
+    actual.every(
+      (token) =>
+        token && typeof token === 'object' && validTypes.includes(token['type'])
+    )
+  ).toBe(true);
+});
+
 it('should convert source code', () => {
   const lexer = new Lexer(`
   let five = 5;
@@ -46,8 +73,6 @@ it('should convert source code', () => {
   let result = add(five, ten);
   `);
   const actual = lexer.start();
-
-  console.log(actual);
 
   const expected = [
     { type: TokenType.LET, literal: 'let' },

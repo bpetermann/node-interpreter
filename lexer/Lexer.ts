@@ -16,7 +16,7 @@ export default class Lexer {
 
   public start(): Token[] {
     this.readChar();
-    while (this._readPosition < this.input.length) {
+    while (this._readPosition <= this.input.length) {
       this.nextToken();
     }
     this._tokens.push({ type: TokenType.EOF, literal: '' });
@@ -43,7 +43,7 @@ export default class Lexer {
     };
   }
 
-  private readNumber(): Token {
+  private readDigit(): Token {
     let pos = this._position;
     while (this.isDigit(this.input[pos])) {
       pos += 1;
@@ -85,7 +85,7 @@ export default class Lexer {
         if (this.isLetter(this._char)) {
           this._tokens.push(this.readIdentifier());
         } else if (this.isDigit(this._char)) {
-          this._tokens.push(this.readNumber());
+          this._tokens.push(this.readDigit());
         } else {
           this._tokens.push({
             type: TokenType.ILLEGAL,
