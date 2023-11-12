@@ -1,5 +1,6 @@
-import { TokenType, Lexer } from '../lexer';
 import { expect } from '@jest/globals';
+import { TokenType } from '../token';
+import { Lexer } from '../lexer';
 
 it('should create an array of tokens', () => {
   const lexer = new Lexer('=+(){},;');

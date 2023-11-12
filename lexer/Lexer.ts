@@ -1,7 +1,5 @@
-import { lookUpToken } from './token';
-import { WhiteSpace } from './tokenType';
-import TokenType from './tokenType';
-import Token from './token';
+import { WhiteSpace, TokenType, Token, lookUpToken } from '../token';
+
 export default class Lexer {
   private _tokens: Token[];
   private _position: number;
@@ -72,7 +70,6 @@ export default class Lexer {
 
   private nextToken(): void {
     switch (this._char) {
-      // Eat Whitespace
       case WhiteSpace.WHITESPACE:
       case WhiteSpace.TAB:
       case WhiteSpace.NEWLINE:
@@ -97,16 +94,16 @@ export default class Lexer {
         break;
       case TokenType.ASSIGN:
       case TokenType.BANG:
-        const peekedEQ = this.peekChar() === '=';
+        const peekedEqualSign = this.peekChar() === '=';
         this._tokens.push({
-          type: peekedEQ
+          type: peekedEqualSign
             ? this._char === '='
               ? TokenType.EQ
               : TokenType.NOT_EQ
             : (this._char as TokenType),
-          literal: peekedEQ ? this._char + '=' : this._char,
+          literal: peekedEqualSign ? `${this._char}=` : this._char,
         });
-        if (peekedEQ) this.readChar();
+        if (peekedEqualSign) this.readChar();
         break;
       default:
         if (this.isLetter(this._char)) {

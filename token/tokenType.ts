@@ -39,5 +39,4 @@ enum WhiteSpace {
   CARRIAGE_RETURN = '\r',
 }
 
-export { WhiteSpace };
-export default TokenType;
+export { WhiteSpace, TokenType };

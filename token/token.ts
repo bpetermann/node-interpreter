@@ -1,4 +1,4 @@
-import TokenType from './tokenType';
+import { TokenType } from './tokenType';
 
 type Token = {
   type: TokenType;
@@ -19,5 +19,4 @@ const lookUpToken = (str: string) => {
   );
 };
 
-export default Token;
-export { lookUpToken };
+export { Token, lookUpToken };
