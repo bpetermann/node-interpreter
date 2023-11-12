@@ -6,15 +6,17 @@ type Token = {
 };
 
 const lookUpToken = (str: string) => {
-  if (str === 'let') {
-    return TokenType.LET;
-  }
-
-  if (str === 'fn') {
-    return TokenType.FUNCTION;
-  }
-
-  return TokenType.IDENT;
+  return (
+    {
+      let: TokenType.LET,
+      fn: TokenType.FUNCTION,
+      true: TokenType.TRUE,
+      false: TokenType.FALSE,
+      if: TokenType.IF,
+      else: TokenType.ELSE,
+      return: TokenType.RETURN,
+    }[str] || TokenType.IDENT
+  );
 };
 
 export default Token;

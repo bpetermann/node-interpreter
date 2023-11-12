@@ -1,18 +1,27 @@
 enum TokenType {
   ILLEGAL = 'ILLEGAL',
   EOF = 'EOF',
+  // Identifiers + literals
   IDENT = 'IDENT',
   INT = 'INT',
-  ASSIGN = '=',
-  PLUS = '+',
+  // Delimiters
   COMMA = ',',
   SEMICOLON = ';',
   LPAREN = '(',
   RPAREN = ')',
   LBRACE = '{',
   RBRACE = '}',
+  // Keywords
   FUNCTION = 'FUNCTION',
   LET = 'LET',
+  TRUE = 'TRUE',
+  FALSE = 'FALSE',
+  IF = 'IF',
+  ELSE = 'ELSE',
+  RETURN = 'RETURN',
+  // Operators
+  ASSIGN = '=',
+  PLUS = '+',
   BANG = '!',
   MINUS = '-',
   SLASH = '/',

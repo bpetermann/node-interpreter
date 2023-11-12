@@ -73,6 +73,12 @@ it('should convert source code', () => {
   let result = add(five, ten);
   !-/*5;
   5 < 10 > 5;
+  
+  if (5 < 10) {
+    return true;
+  } else {
+    return false;
+  }
   `);
   const actual = lexer.start();
 
@@ -125,7 +131,25 @@ it('should convert source code', () => {
     { type: TokenType.GT, literal: '>' },
     { type: TokenType.INT, literal: '5' },
     { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.IF, literal: 'if' },
+    { type: TokenType.LPAREN, literal: '(' },
+    { type: TokenType.INT, literal: '5' },
+    { type: TokenType.LT, literal: '<' },
+    { type: TokenType.INT, literal: '10' },
+    { type: TokenType.RPAREN, literal: ')' },
+    { type: TokenType.LBRACE, literal: '{' },
+    { type: TokenType.RETURN, literal: 'return' },
+    { type: TokenType.TRUE, literal: 'true' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.RBRACE, literal: '}' },
+    { type: TokenType.ELSE, literal: 'else' },
+    { type: TokenType.LBRACE, literal: '{' },
+    { type: TokenType.RETURN, literal: 'return' },
+    { type: TokenType.FALSE, literal: 'false' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.RBRACE, literal: '}' },
     { type: TokenType.EOF, literal: '' },
+
   ];
 
   expect(actual).toEqual(expected);
