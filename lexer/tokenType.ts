@@ -20,6 +20,8 @@ enum TokenType {
   ELSE = 'ELSE',
   RETURN = 'RETURN',
   // Operators
+  EQ = '==',
+  NOT_EQ = '!=',
   ASSIGN = '=',
   PLUS = '+',
   BANG = '!',

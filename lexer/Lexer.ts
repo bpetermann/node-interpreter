@@ -56,6 +56,14 @@ export default class Lexer {
     };
   }
 
+  private peekChar(): string {
+    if (this._readPosition >= this.input.length) {
+      return '';
+    } else {
+      return this.input[this._readPosition];
+    }
+  }
+
   private readChar(): void {
     this._char = this.input[this._readPosition];
     this._position = this._readPosition;
@@ -64,12 +72,12 @@ export default class Lexer {
 
   private nextToken(): void {
     switch (this._char) {
+      // Eat Whitespace
       case WhiteSpace.WHITESPACE:
       case WhiteSpace.TAB:
       case WhiteSpace.NEWLINE:
       case WhiteSpace.CARRIAGE_RETURN:
         break;
-      case TokenType.ASSIGN:
       case TokenType.SEMICOLON:
       case TokenType.LPAREN:
       case TokenType.RPAREN:
@@ -77,7 +85,6 @@ export default class Lexer {
       case TokenType.PLUS:
       case TokenType.LBRACE:
       case TokenType.RBRACE:
-      case TokenType.BANG:
       case TokenType.MINUS:
       case TokenType.SLASH:
       case TokenType.ASTERISK:
@@ -87,6 +94,19 @@ export default class Lexer {
           type: this._char as TokenType,
           literal: this._char,
         });
+        break;
+      case TokenType.ASSIGN:
+      case TokenType.BANG:
+        const peekedEQ = this.peekChar() === '=';
+        this._tokens.push({
+          type: peekedEQ
+            ? this._char === '='
+              ? TokenType.EQ
+              : TokenType.NOT_EQ
+            : (this._char as TokenType),
+          literal: peekedEQ ? this._char + '=' : this._char,
+        });
+        if (peekedEQ) this.readChar();
         break;
       default:
         if (this.isLetter(this._char)) {
