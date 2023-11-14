@@ -5,23 +5,24 @@ export default class Lexer {
   private _position: number;
   private _readPosition: number;
   private _char: string | null;
-  input: string;
 
-  constructor() {
+  constructor(public readonly input: string) {
     this._position = 0;
     this._readPosition = 0;
     this._char = null;
     this._tokens = [];
+    this.start();
   }
 
-  public start(input: string): Token[] {
-    console.log(input);
-    this.input = input;
+  public start(): void {
     this.readChar();
     while (this._readPosition <= this.input.length) {
       this.nextToken();
     }
     this._tokens.push({ type: TokenType.EOF, literal: '' });
+  }
+
+  get tokens(): Token[] {
     return this._tokens;
   }
 

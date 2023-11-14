@@ -3,8 +3,8 @@ import { TokenType } from '../token';
 import { Lexer } from '../lexer';
 
 it('should create an array of tokens', () => {
-  const lexer = new Lexer();
-  const actual = lexer.start('=+(){},;');
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.tokens;
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -22,8 +22,8 @@ it('should create an array of tokens', () => {
 it('should create only valid tokens', () => {
   const validTypes = Object.values(TokenType);
 
-  const lexer = new Lexer();
-  const actual = lexer.start('=+(){},;');
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.tokens;
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -38,8 +38,8 @@ it('should create only valid tokens', () => {
 it('should create only valid tokens', () => {
   const validTypes = Object.values(TokenType);
 
-  const lexer = new Lexer();
-  const actual = lexer.start('=+(){},;');
+  const lexer = new Lexer('=+(){},;');
+  const actual = lexer.tokens;
 
   expect(Array.isArray(actual)).toBe(true);
 
@@ -63,9 +63,7 @@ it('should create only valid tokens', () => {
 });
 
 it('should convert source code', () => {
-  const lexer = new Lexer();
-
-  const actual = lexer.start(`
+  const lexer = new Lexer(`
   let five = 5;
   let ten = 10;
   
@@ -86,6 +84,8 @@ it('should convert source code', () => {
   10 == 10;
   10 != 9;
   `);
+
+  const actual = lexer.tokens;
 
   const expected = [
     { type: TokenType.LET, literal: 'let' },

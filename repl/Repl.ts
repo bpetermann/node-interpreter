@@ -1,21 +1,16 @@
 import { Lexer } from '../lexer';
-import { Token } from '../token';
 import readline from 'readline';
 
 export default class Repl {
-  private _lexer: Lexer;
-  private _tokens: Token[];
   private _input: string;
 
   constructor() {
     this._input = '';
-    this._lexer = new Lexer();
-    this._tokens = [];
   }
 
   private print() {
-    this._tokens = this._lexer.start(this._input);
-    console.log('Tokens:', this._tokens);
+    const lexer = new Lexer(this._input);
+    console.log('Tokens:', lexer.tokens);
     console.log('Goodbye!');
   }
 
@@ -27,10 +22,10 @@ export default class Repl {
 
     this._input += input;
 
-    this.scan();
+    this.start();
   }
 
-  async scan() {
+  async start() {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
