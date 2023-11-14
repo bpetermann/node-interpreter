@@ -1,4 +1,4 @@
-import { Repl } from './repl';
+import Repl from './repl/Repl';
 
 const repl = new Repl();
 repl.scan();

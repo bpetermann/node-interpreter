@@ -22,8 +22,7 @@ export default class Lexer {
       this.nextToken();
     }
     this._tokens.push({ type: TokenType.EOF, literal: '' });
-    const tokens = this._tokens;
-    return tokens;
+    return this._tokens;
   }
 
   private isLetter(char: string): boolean {
