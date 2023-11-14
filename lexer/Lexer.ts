@@ -5,21 +5,25 @@ export default class Lexer {
   private _position: number;
   private _readPosition: number;
   private _char: string | null;
+  input: string;
 
-  constructor(public readonly input: string) {
+  constructor() {
     this._position = 0;
     this._readPosition = 0;
     this._char = null;
     this._tokens = [];
   }
 
-  public start(): Token[] {
+  public start(input: string): Token[] {
+    console.log(input);
+    this.input = input;
     this.readChar();
     while (this._readPosition <= this.input.length) {
       this.nextToken();
     }
     this._tokens.push({ type: TokenType.EOF, literal: '' });
-    return this._tokens;
+    const tokens = this._tokens;
+    return tokens;
   }
 
   private isLetter(char: string): boolean {
