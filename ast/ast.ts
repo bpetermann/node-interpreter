@@ -38,17 +38,17 @@ class Identifier implements NodeType {
 }
 
 class LetStatement implements Statement {
-  _identifier: Token;
+  _name: Identifier;
   _value: Token;
 
   constructor(public token: Token) {}
 
   set name(token: Token) {
-    this._identifier = token;
+    this._name = new Identifier(token);
   }
 
   tokenLiteral(): string {
-    return this._identifier.literal;
+    return this.token.literal;
   }
 
   set value(token: Token) {
