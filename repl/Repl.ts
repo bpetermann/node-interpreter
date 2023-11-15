@@ -1,3 +1,4 @@
+import { TokenType } from '../token';
 import { Lexer } from '../lexer';
 import readline from 'readline';
 
@@ -11,13 +12,12 @@ export default class Repl {
   private print() {
     const lexer = new Lexer(this._input);
     console.log('Tokens:', lexer.tokens);
-    console.log('Goodbye!');
+    process.exit(0);
   }
 
   private processInput(input: string) {
-    if (input.trim().toLowerCase() === 'exit') {
+    if (input.trim().toUpperCase() === TokenType.EOF) {
       this.print();
-      process.exit(0);
     }
 
     this._input += input;
