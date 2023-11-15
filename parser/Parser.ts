@@ -1,5 +1,5 @@
-import { LetStatement, Program } from '../ast/ast';
 import { Token, TokenType, isTokenType } from '../token';
+import { LetStatement, Program } from '../ast';
 import { Lexer } from '../lexer';
 
 export default class Parser {
@@ -28,7 +28,9 @@ export default class Parser {
     }
 
     // Debug
-    console.log(this._program.statements.map((stmt) => stmt.name.tokenLiteral()));
+    console.log(
+      this._program.statements.map((stmt) => stmt.name.tokenLiteral())
+    );
 
     return this._program.statements;
   }

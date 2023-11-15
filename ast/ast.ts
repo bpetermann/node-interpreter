@@ -5,12 +5,25 @@ interface NodeType {
 }
 
 interface Statement extends NodeType {
-  name: Identifier
+  name: Identifier;
+  value: Expression;
   statementNode: () => void;
 }
 
-interface Expression extends NodeType {
-  expressionNode: () => void;
+class Expression implements NodeType {
+  constructor(public token: Token) {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+}
+
+class Identifier implements NodeType {
+  constructor(public token: Token) {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
 }
 
 class Program {
@@ -28,22 +41,9 @@ class Program {
   }
 }
 
-class Identifier implements NodeType {
-  _value: string;
-  value: string;
-
-  constructor(public token: Token) {
-    this.value = this.tokenLiteral();
-  }
-
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-}
-
 class LetStatement implements Statement {
   _name: Identifier;
-  _value: Token;
+  _value: Expression;
 
   constructor(public token: Token) {}
 
@@ -55,12 +55,16 @@ class LetStatement implements Statement {
     return this._name;
   }
 
-  tokenLiteral(): string {
-    return this.token.literal;
+  set value(token: Token) {
+    this._value = new Expression(token);
   }
 
-  set value(token: Token) {
-    this._value = token;
+  get value(): Expression {
+    return this._value;
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
   }
 
   statementNode() {}
