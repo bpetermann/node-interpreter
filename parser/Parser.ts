@@ -19,10 +19,6 @@ export default class Parser {
   parse() {
     this.nextToken();
 
-    // if (this._curToken.type === TokenType.EOF || !statement) {
-    //   return;
-    // }
-
     while (this._curToken.type !== TokenType.EOF) {
       const stmt = this.parseStatement();
       if (stmt) {
@@ -31,9 +27,10 @@ export default class Parser {
       this.nextToken();
     }
 
-    // this.parse();
+    // Debug
+    console.log(this._program.statements.map((stmt) => stmt.name.tokenLiteral()));
 
-    this._program.show();
+    return this._program.statements;
   }
 
   parseStatement(): LetStatement | null {
@@ -49,7 +46,6 @@ export default class Parser {
     const stmt = new LetStatement(this._curToken);
 
     if (!isTokenType(this._peekToken, TokenType.IDENT)) {
-      console.log('Next token is not an ident');
       return null;
     }
 
@@ -58,15 +54,12 @@ export default class Parser {
     this.nextToken();
 
     if (!isTokenType(this._peekToken, TokenType.ASSIGN)) {
-      console.log('Next token is not an assign');
       return null;
     }
 
     while (!isTokenType(this._curToken, TokenType.SEMICOLON)) {
       this.nextToken();
     }
-
-    // stmt.value = this._peekToken;
 
     return stmt;
   }
