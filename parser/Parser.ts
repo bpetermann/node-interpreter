@@ -8,18 +8,30 @@ export default class Parser {
   _peekToken: Token;
   _position: number;
   _program: Program;
+  _errors: string[];
 
   constructor(input: string) {
     this._position = 0;
     this._lexer = new Lexer(input);
     this._program = new Program();
     this._peekToken = this._lexer.tokens[this._position];
+    this._errors = [];
   }
 
-  parse() {
+  get errors(): string[] {
+    return this._errors;
+  }
+
+  setError(expected: string, got: Token) {
+    this._errors.push(
+      `expected next token to be "${expected}" got "${got.literal}" instead`
+    );
+  }
+
+  parse(): Program {
     this.nextToken();
 
-    while (this._curToken.type !== TokenType.EOF) {
+    while (!isTokenType(this._curToken, TokenType.EOF)) {
       const stmt = this.parseStatement();
       if (stmt) {
         this._program.add(stmt);
@@ -32,7 +44,7 @@ export default class Parser {
       this._program.statements.map((stmt) => stmt.name.tokenLiteral())
     );
 
-    return this._program.statements;
+    return this._program;
   }
 
   parseStatement(): LetStatement | null {
@@ -48,6 +60,7 @@ export default class Parser {
     const stmt = new LetStatement(this._curToken);
 
     if (!isTokenType(this._peekToken, TokenType.IDENT)) {
+      this.setError(TokenType.IDENT, this._peekToken);
       return null;
     }
 
@@ -56,6 +69,7 @@ export default class Parser {
     this.nextToken();
 
     if (!isTokenType(this._peekToken, TokenType.ASSIGN)) {
+      this.setError(TokenType.ASSIGN, this._peekToken);
       return null;
     }
 
@@ -66,7 +80,7 @@ export default class Parser {
     return stmt;
   }
 
-  nextToken() {
+  nextToken(): void {
     this._curToken = this._peekToken;
     this._position += 1;
     this._peekToken = this._lexer.tokens[this._position];

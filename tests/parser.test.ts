@@ -9,9 +9,20 @@ it('should parse input to statements', () => {
     `);
   const actual = parser.parse();
 
-  const stmt = actual.map((stmt) => stmt.name.tokenLiteral());
+  const stmt = actual.statements.map((stmt) => stmt.name.tokenLiteral());
 
   const expected = ['x', 'y', 'foobar'];
 
   expect(stmt).toEqual(expected);
+});
+
+it('should add an error message', () => {
+  const parser = new Parser(`let x x 5;`);
+  parser.parse();
+
+  const errors = parser.errors;
+
+  const expected = [`expected next token to be "=" got "x" instead`];
+
+  expect(errors).toEqual(expected);
 });
