@@ -19,4 +19,11 @@ const lookUpToken = (str: string) => {
   );
 };
 
-export { Token, lookUpToken };
+const isTokenType = (
+  token: Token,
+  tokenType: TokenType
+): token is Token & { type: typeof tokenType } => {
+  return token.type === tokenType;
+};
+
+export { Token, lookUpToken, isTokenType };

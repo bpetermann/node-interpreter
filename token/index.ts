@@ -1,2 +1,2 @@
 export { WhiteSpace, TokenType } from './tokenType';
-export { Token, lookUpToken } from './token';
+export { Token, lookUpToken, isTokenType } from './token';

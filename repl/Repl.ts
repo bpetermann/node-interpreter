@@ -1,5 +1,5 @@
 import { TokenType } from '../token';
-import { Lexer } from '../lexer';
+import Parser from '../parser/Parser';
 import readline from 'readline';
 
 export default class Repl {
@@ -10,8 +10,8 @@ export default class Repl {
   }
 
   private print() {
-    const lexer = new Lexer(this._input);
-    console.log('Tokens:', lexer.tokens);
+    const parser = new Parser(this._input);
+    parser.parse();
     process.exit(0);
   }
 
