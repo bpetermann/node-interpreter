@@ -1,6 +1,6 @@
-import { Token, TokenType, isTokenType } from '../token';
-import { LetStatement, Program } from '../ast';
-import { Lexer } from '../lexer';
+import { LetStatement, Program, ReturnStatement, StatementType } from '@ast';
+import { Token, TokenType, isTokenType } from '@token';
+import { Lexer } from '@lexer';
 
 export default class Parser {
   _lexer: Lexer;
@@ -28,6 +28,12 @@ export default class Parser {
     );
   }
 
+  nextToken(): void {
+    this._curToken = this._peekToken;
+    this._position += 1;
+    this._peekToken = this._lexer.tokens[this._position];
+  }
+
   parse(): Program {
     this.nextToken();
 
@@ -39,18 +45,15 @@ export default class Parser {
       this.nextToken();
     }
 
-    // Debug
-    console.log(
-      this._program.statements.map((stmt) => stmt.name.tokenLiteral())
-    );
-
     return this._program;
   }
 
-  parseStatement(): LetStatement | null {
+  parseStatement(): StatementType | null {
     switch (this._curToken.type) {
       case TokenType.LET:
         return this.parseLetStatement();
+      case TokenType.RETURN:
+        return this.parseReturnStatement();
       default:
         return null;
     }
@@ -80,9 +83,15 @@ export default class Parser {
     return stmt;
   }
 
-  nextToken(): void {
-    this._curToken = this._peekToken;
-    this._position += 1;
-    this._peekToken = this._lexer.tokens[this._position];
+  parseReturnStatement(): ReturnStatement | null {
+    const stmt = new ReturnStatement(this._curToken);
+
+    this.nextToken();
+
+    while (!isTokenType(this._curToken, TokenType.SEMICOLON)) {
+      this.nextToken();
+    }
+
+    return stmt;
   }
 }

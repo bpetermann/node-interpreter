@@ -2,6 +2,14 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "@ast": ["ast"],
+      "@lexer": ["lexer"],
+      "@parser": ["parser/Parser"],
+      "@repl": ["repl/Repl"],
+      "@token": ["token"]
+    },
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
