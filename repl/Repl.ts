@@ -1,7 +1,7 @@
-import { TokenType } from '@token';
-import readline from 'readline';
-import Parser from '@parser';
 
+import Parser from '../parser/Parser';
+import { TokenType } from '../token';
+import readline from 'readline';
 export default class Repl {
   private _input: string;
 

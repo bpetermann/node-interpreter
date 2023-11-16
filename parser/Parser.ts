@@ -1,6 +1,6 @@
-import { LetStatement, Program, ReturnStatement, StatementType } from '@ast';
-import { Token, TokenType, isTokenType } from '@token';
-import { Lexer } from '@lexer';
+import { LetStatement, Program, ReturnStatement, StatementType } from '../ast';
+import { Token, TokenType, isTokenType } from '../token';
+import { Lexer } from '../lexer';
 
 export default class Parser {
   _lexer: Lexer;
@@ -44,6 +44,9 @@ export default class Parser {
       }
       this.nextToken();
     }
+
+    // Debug
+    console.log(this._program.outputStmt());
 
     return this._program;
   }

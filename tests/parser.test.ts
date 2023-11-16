@@ -1,5 +1,6 @@
 import { expect } from '@jest/globals';
-import Parser from '@parser';
+import { LetStatement } from '../ast';
+import Parser from '../parser/Parser';
 
 it('should parse input to statements', () => {
   const parser = new Parser(`
@@ -9,7 +10,11 @@ it('should parse input to statements', () => {
     `);
   const actual = parser.parse();
 
-  const stmt = actual.statements.map((stmt) => stmt.name?.tokenLiteral());
+  const stmt = actual.statements.map((stmt) => {
+    if (stmt instanceof LetStatement) {
+      return stmt.name.tokenLiteral();
+    }
+  });
 
   const expected = ['x', 'y', 'foobar'];
 

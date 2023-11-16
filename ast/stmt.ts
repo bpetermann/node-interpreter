@@ -5,8 +5,6 @@ interface NodeType {
 }
 
 interface Statement extends NodeType {
-  name?: Identifier;
-  value: Expression;
   statementNode: () => void;
 }
 
@@ -17,6 +15,8 @@ class Expression implements NodeType {
     return this.token.literal;
   }
 }
+
+type StatementType = LetStatement | ReturnStatement;
 
 class Identifier implements NodeType {
   constructor(public token: Token) {}
@@ -75,6 +75,16 @@ class ReturnStatement implements Statement {
   statementNode() {}
 }
 
-type StatementType = LetStatement | ReturnStatement;
+class ExpressionStatement implements Statement {
+  _expression: Expression;
+
+  constructor(public token: Token) {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  statementNode() {}
+}
 
 export { LetStatement, ReturnStatement, StatementType, Statement };
