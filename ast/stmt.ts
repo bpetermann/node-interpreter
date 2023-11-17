@@ -1,13 +1,5 @@
 import { Token } from '../token';
-
-interface NodeType {
-  getString(): string;
-  tokenLiteral(): string;
-}
-
-interface Statement extends NodeType {
-  statementNode: () => void;
-}
+import { NodeType, Statement } from './stmtType';
 
 class Expression implements NodeType {
   constructor(public token: Token) {}
@@ -20,8 +12,6 @@ class Expression implements NodeType {
     return this.token.literal;
   }
 }
-
-type StatementType = LetStatement | ReturnStatement;
 
 class Identifier implements NodeType {
   constructor(public token: Token) {}
@@ -93,11 +83,18 @@ class ReturnStatement implements Statement {
 }
 
 class ExpressionStatement implements Statement {
-  _expression: Expression;
+  _expression: Identifier[];
 
-  constructor(public token: Token) {}
+  constructor(public token: Token) {
+    this._expression = [];
+  }
+
+  addExpression(ident: Identifier) {
+    this._expression.push(ident);
+  }
+
   getString(): string {
-    return this._expression.getString();
+    return this._expression.map((exp) => exp.getString()).join(', ');
   }
 
   tokenLiteral(): string {
@@ -107,4 +104,10 @@ class ExpressionStatement implements Statement {
   statementNode() {}
 }
 
-export { LetStatement, ReturnStatement, StatementType, Statement };
+export {
+  LetStatement,
+  ReturnStatement,
+  ExpressionStatement,
+  Expression,
+  Identifier,
+};

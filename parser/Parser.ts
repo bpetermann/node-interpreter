@@ -1,6 +1,16 @@
-import { LetStatement, Program, ReturnStatement, StatementType } from '../ast';
+import {
+  LetStatement,
+  Program,
+  ReturnStatement,
+  ExpressionStatement,
+  ExpressionType,
+  Expression,
+  Identifier,
+} from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { Lexer } from '../lexer';
+
+type StatementType = LetStatement | ReturnStatement | ExpressionStatement;
 
 export default class Parser {
   _lexer: Lexer;
@@ -9,6 +19,8 @@ export default class Parser {
   _position: number;
   _program: Program;
   _errors: string[];
+  _prefixParseFns: { [k: string]: () => Identifier };
+  _infixParseFns: { [k: string]: () => Identifier };
 
   constructor(input: string) {
     this._position = 0;
@@ -16,6 +28,10 @@ export default class Parser {
     this._program = new Program();
     this._peekToken = this._lexer.tokens[this._position];
     this._errors = [];
+    this._prefixParseFns = {
+      [TokenType.IDENT]: this.parseIdentifier.bind(this),
+    };
+    this._infixParseFns = {};
   }
 
   get errors(): string[] {
@@ -42,6 +58,7 @@ export default class Parser {
       if (stmt) {
         this._program.add(stmt);
       }
+
       this.nextToken();
     }
 
@@ -58,7 +75,7 @@ export default class Parser {
       case TokenType.RETURN:
         return this.parseReturnStatement();
       default:
-        return null;
+        return this.parseExpressionStatement();
     }
   }
 
@@ -92,6 +109,38 @@ export default class Parser {
     this.nextToken();
 
     while (!isTokenType(this._curToken, TokenType.SEMICOLON)) {
+      this.nextToken();
+    }
+
+    return stmt;
+  }
+
+  parseIdentifier(): Identifier {
+    return new Identifier(this._curToken);
+  }
+
+  parseExpression(_: ExpressionType) {
+    const prefix = this._prefixParseFns[this._curToken?.type];
+
+    if (!prefix) {
+      return null;
+    }
+
+    const leftExpression = prefix();
+
+    return leftExpression;
+  }
+
+  parseExpressionStatement(): ExpressionStatement | null {
+    const stmt = new ExpressionStatement(this._curToken);
+
+    const expression = this.parseExpression(ExpressionType.LOWEST);
+
+    if (expression) {
+      stmt.addExpression(expression);
+    }
+
+    if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
       this.nextToken();
     }
 
