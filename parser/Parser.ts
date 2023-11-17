@@ -46,7 +46,7 @@ export default class Parser {
     }
 
     // Debug
-    console.log(this._program.outputStmt());
+    console.log(this._program.getString());
 
     return this._program;
   }
