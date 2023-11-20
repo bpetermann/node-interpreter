@@ -13,6 +13,21 @@ class Expression implements NodeType {
   }
 }
 
+class PrefixExpression implements NodeType {
+  _operator: string;
+  _right: Expression;
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    return `literal: ${this.token.literal} right: ${this._right.getString()}`;
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+}
+
 class Identifier implements NodeType {
   constructor(public token: Token) {}
 
@@ -83,18 +98,16 @@ class ReturnStatement implements Statement {
 }
 
 class ExpressionStatement implements Statement {
-  _expression: Identifier[];
+  _expression: Identifier | Expression | PrefixExpression;
 
-  constructor(public token: Token) {
-    this._expression = [];
-  }
+  constructor(public token: Token) {}
 
-  addExpression(ident: Identifier) {
-    this._expression.push(ident);
+  add(ident: Identifier) {
+    this._expression = ident;
   }
 
   getString(): string {
-    return this._expression.map((exp) => exp.getString()).join(', ');
+    return this._expression.getString();
   }
 
   tokenLiteral(): string {
@@ -110,4 +123,5 @@ export {
   ExpressionStatement,
   Expression,
   Identifier,
+  PrefixExpression,
 };

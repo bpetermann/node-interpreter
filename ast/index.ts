@@ -3,7 +3,8 @@ export {
   ReturnStatement,
   ExpressionStatement,
   Expression,
-  Identifier
+  Identifier,
+  PrefixExpression
 } from './stmt';
 export { NodeType, Statement, ExpressionType } from './stmtType';
 export { Program } from './ast';

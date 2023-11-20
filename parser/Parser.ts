@@ -6,6 +6,7 @@ import {
   ExpressionType,
   Expression,
   Identifier,
+  PrefixExpression,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { Lexer } from '../lexer';
@@ -32,6 +33,8 @@ export default class Parser {
     this._prefixParseFns = {
       [TokenType.IDENT]: this.parseIdentifier.bind(this),
       [TokenType.INT]: this.parseIntegerLiteral.bind(this),
+      [TokenType.BANG]: this.parsePrefixExpression.bind(this),
+      [TokenType.MINUS]: this.parsePrefixExpression.bind(this),
     };
     this._infixParseFns = {};
   }
@@ -123,6 +126,16 @@ export default class Parser {
     return new Identifier(this._curToken);
   }
 
+  parsePrefixExpression(): PrefixExpression {
+    const expression = new PrefixExpression(this._curToken);
+
+    this.nextToken();
+
+    expression._right = this.parseExpression(ExpressionType.PREFIX);
+
+    return expression;
+  }
+
   parseExpression(_: ExpressionType) {
     const prefix = this._prefixParseFns[this._curToken?.type];
 
@@ -142,7 +155,7 @@ export default class Parser {
     const expression = this.parseExpression(ExpressionType.LOWEST);
 
     if (expression) {
-      stmt.addExpression(expression);
+      stmt.add(expression);
     }
 
     if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
