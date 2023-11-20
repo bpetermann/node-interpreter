@@ -9,6 +9,7 @@ import {
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { Lexer } from '../lexer';
+import setError from './error';
 
 type StatementType = LetStatement | ReturnStatement | ExpressionStatement;
 
@@ -30,18 +31,13 @@ export default class Parser {
     this._errors = [];
     this._prefixParseFns = {
       [TokenType.IDENT]: this.parseIdentifier.bind(this),
+      [TokenType.INT]: this.parseIntegerLiteral.bind(this),
     };
     this._infixParseFns = {};
   }
 
   get errors(): string[] {
     return this._errors;
-  }
-
-  setError(expected: string, got: Token) {
-    this._errors.push(
-      `expected next token to be "${expected}" got "${got.literal}" instead`
-    );
   }
 
   nextToken(): void {
@@ -83,7 +79,9 @@ export default class Parser {
     const stmt = new LetStatement(this._curToken);
 
     if (!isTokenType(this._peekToken, TokenType.IDENT)) {
-      this.setError(TokenType.IDENT, this._peekToken);
+      this._errors.push(
+        setError({ expected: TokenType.IDENT, got: this._peekToken })
+      );
       return null;
     }
 
@@ -92,7 +90,9 @@ export default class Parser {
     this.nextToken();
 
     if (!isTokenType(this._peekToken, TokenType.ASSIGN)) {
-      this.setError(TokenType.ASSIGN, this._peekToken);
+      this._errors.push(
+        setError({ expected: TokenType.ASSIGN, got: this._peekToken })
+      );
       return null;
     }
 
@@ -119,10 +119,15 @@ export default class Parser {
     return new Identifier(this._curToken);
   }
 
+  parseIntegerLiteral(): Identifier {
+    return new Identifier(this._curToken);
+  }
+
   parseExpression(_: ExpressionType) {
     const prefix = this._prefixParseFns[this._curToken?.type];
 
     if (!prefix) {
+      this._errors.push(setError({ type: 'parse', got: this._curToken }));
       return null;
     }
 

@@ -32,7 +32,7 @@ it('should add an error message', () => {
   expect(errors).toEqual(expected);
 });
 
-it('should have a length of 3 stmts', () => {
+it('should have a length of 3', () => {
   const parser = new Parser(`
   return 5;
   return 10;
@@ -43,4 +43,39 @@ it('should have a length of 3 stmts', () => {
   const stmt = actual.statements.length;
 
   expect(stmt).toEqual(3);
+});
+
+it('should parse an string expression', () => {
+  const parser = new Parser(`
+  foo;
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.getString()[0];
+
+  expect(stmt).toEqual('foo');
+});
+
+it('should parse an number expression', () => {
+  const parser = new Parser(`
+  5;
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.getString()[0];
+
+  expect(stmt).toEqual('5');
+});
+
+it('should parse prefix operators', () => {
+  const parser = new Parser(`
+  !5;
+  `);
+  const actual = parser.parse();
+
+  console.log(parser.errors);
+  
+  const stmt = actual.getString();
+
+  expect(stmt).toEqual(['!', '5']);
 });
