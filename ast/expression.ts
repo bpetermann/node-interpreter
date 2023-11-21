@@ -6,16 +6,16 @@ interface Expression extends NodeType {
 }
 
 class IntegerLiteral implements Expression {
-  _value: number;
+  value: number;
 
   constructor(public token: Token) {
-    this._value = Number(token.literal);
+    this.value = Number(token.literal);
   }
 
   statementNode: () => void;
 
   getString(): string {
-    return `${IntegerLiteral.name}: value: ${this._value}`;
+    return `${IntegerLiteral.name}: value: ${this.value}`;
   }
 
   tokenLiteral(): string {
@@ -24,11 +24,11 @@ class IntegerLiteral implements Expression {
 }
 
 class PrefixExpression implements Expression {
-  _operator: string;
+  operator: string;
   right: Expression;
 
   constructor(public token: Token) {
-    this._operator = this.token.literal;
+    this.operator = this.token.literal;
   }
 
   getString(): string {
@@ -69,10 +69,10 @@ class InfixExpression implements Expression {
 }
 
 class Identifier implements Expression {
-  _value: string;
+  value: string;
 
   constructor(public token: Token) {
-    this._value = token.literal;
+    this.value = token.literal;
   }
 
   getString(): string {

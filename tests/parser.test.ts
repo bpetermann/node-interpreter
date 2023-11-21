@@ -89,10 +89,10 @@ it('should parse infix operators', () => {
   expect(stmt).toBeInstanceOf(ExpressionStatement);
   if (
     stmt instanceof ExpressionStatement &&
-    stmt._expression instanceof InfixExpression
+    stmt.expression instanceof InfixExpression
   ) {
-    expect(stmt._expression.left.tokenLiteral()).toEqual('5');
-    expect(stmt._expression.operator).toEqual('+');
-    expect(stmt._expression.right.tokenLiteral()).toEqual('3');
+    expect(stmt.expression.left.tokenLiteral()).toEqual('5');
+    expect(stmt.expression.operator).toEqual('+');
+    expect(stmt.expression.right.tokenLiteral()).toEqual('3');
   }
 });

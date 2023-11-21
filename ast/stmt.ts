@@ -3,31 +3,15 @@ import { Statement } from './types';
 import { Token } from '../token';
 
 class LetStatement implements Statement {
-  _name: Identifier;
-  _value: Expression;
+  name: Identifier;
+  value: Expression;
 
   constructor(public token: Token) {}
-
-  set name(token: Token) {
-    this._name = new Identifier(token);
-  }
-
-  get name(): Identifier {
-    return this._name;
-  }
-
-  set value(token: Token) {
-    this._value = new Identifier(token);
-  }
-
-  get value(): Expression {
-    return this._value;
-  }
 
   getString(): string {
     return `${
       LetStatement.name
-    }: name: ${this._name.getString()} value: ${this._value?.getString()}`;
+    }: name: ${this.name.getString()} value: ${this.value?.getString()}`;
   }
 
   tokenLiteral(): string {
@@ -38,21 +22,13 @@ class LetStatement implements Statement {
 }
 
 class ReturnStatement implements Statement {
-  _returnValue: Expression;
+  returnValue: Expression;
 
   constructor(public token: Token) {}
 
-  set value(token: Token) {
-    this._returnValue = new Identifier(token);
-  }
-
-  get value(): Expression {
-    return this._returnValue;
-  }
-
   getString(): string {
     return `${ReturnStatement.name}: name: ${this.tokenLiteral()} value: ${
-      this._returnValue
+      this.returnValue
     }`;
   }
 
@@ -64,16 +40,12 @@ class ReturnStatement implements Statement {
 }
 
 class ExpressionStatement implements Statement {
-  _expression: Expression;
+  expression: Expression;
 
   constructor(public token: Token) {}
 
-  add(ident: Identifier) {
-    this._expression = ident;
-  }
-
   getString(): string {
-    return `${ExpressionStatement.name}:  ${this._expression.getString()}`;
+    return `${ExpressionStatement.name}:  ${this.expression.getString()}`;
   }
 
   tokenLiteral(): string {

@@ -18,15 +18,14 @@ import setError from './error';
 type StatementType = LetStatement | ReturnStatement | ExpressionStatement;
 
 export default class Parser {
-  _lexer: Lexer;
-  _curToken: Token;
-  _peekToken: Token;
-  _position: number;
-  _program: Program;
-  _errors: string[];
-  _prefixParseFns: { [k: string]: () => Identifier };
-  _infixParseFns: { [k: string]: () => Identifier };
-  _leftExpression: Expression;
+  private _lexer: Lexer;
+  private _curToken: Token;
+  private _peekToken: Token;
+  private _position: number;
+  private _program: Program;
+  private _errors: string[];
+  private _prefixParseFns: { [k: string]: () => Identifier };
+  private _infixParseFns: { [k: string]: (left: Expression) => Identifier };
 
   constructor(input: string) {
     this._position = 0;
@@ -34,7 +33,6 @@ export default class Parser {
     this._program = new Program();
     this._peekToken = this._lexer.tokens[this._position];
     this._errors = [];
-    this._leftExpression = undefined;
     this._prefixParseFns = {
       [TokenType.IDENT]: this.parseIdentifier.bind(this),
       [TokenType.INT]: this.parseIntegerLiteral.bind(this),
@@ -114,7 +112,7 @@ export default class Parser {
       return null;
     }
 
-    stmt.name = this._peekToken;
+    stmt.name = new Identifier(this._peekToken);
 
     this.nextToken();
 
@@ -162,13 +160,8 @@ export default class Parser {
     return expression;
   }
 
-  parseInfixExpression(): InfixExpression {
-    const expression = new InfixExpression(
-      this._curToken,
-      this._leftExpression
-    );
-
-    this._leftExpression = undefined;
+  parseInfixExpression(left: Expression): InfixExpression {
+    const expression = new InfixExpression(this._curToken, left);
 
     const precedence = precedences(this._curToken.type);
 
@@ -202,9 +195,7 @@ export default class Parser {
 
       this.nextToken();
 
-      this._leftExpression = leftExpression;
-
-      leftExpression = infix();
+      leftExpression = infix(leftExpression);
     }
 
     return leftExpression;
@@ -216,7 +207,7 @@ export default class Parser {
     const expression = this.parseExpression(ExpressionType.LOWEST);
 
     if (expression) {
-      stmt.add(expression);
+      stmt.expression = expression;
     }
 
     if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
