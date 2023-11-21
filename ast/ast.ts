@@ -1,7 +1,7 @@
 import { Statement } from './types';
 
 class Program {
-  _statements: Statement[];
+  private _statements: Statement[];
   constructor() {
     this._statements = [];
   }

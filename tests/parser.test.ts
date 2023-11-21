@@ -51,7 +51,7 @@ it('should parse an string expression', () => {
   `);
   const actual = parser.parse();
 
-  const stmt = actual._statements[0].tokenLiteral();
+  const stmt = actual.statements[0].tokenLiteral();
 
   expect(stmt).toEqual('foo');
 });
@@ -62,7 +62,7 @@ it('should parse an number expression', () => {
   `);
   const actual = parser.parse();
 
-  const stmt = actual._statements[0].tokenLiteral();
+  const stmt = actual.statements[0].tokenLiteral();
 
   expect(stmt).toEqual('5');
 });
@@ -73,7 +73,7 @@ it('should parse prefix operators', () => {
   `);
   const actual = parser.parse();
 
-  const stmt = actual._statements[0].tokenLiteral();
+  const stmt = actual.statements[0].tokenLiteral();
 
   expect(stmt).toEqual('!');
 });
@@ -84,7 +84,7 @@ it('should parse infix operators', () => {
   `);
   const actual = parser.parse();
 
-  const stmt = actual._statements[0];
+  const stmt = actual.statements[0];
 
   expect(stmt).toBeInstanceOf(ExpressionStatement);
   if (

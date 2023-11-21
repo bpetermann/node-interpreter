@@ -42,17 +42,14 @@ export default class Parser {
       [TokenType.MINUS]: this.parsePrefixExpression.bind(this),
     };
     this._infixParseFns = {
-      [TokenType.PLUS]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.MINUS]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.SLASH]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.ASTERISK]: this.parseInfixExpression.bind(
-        this,
-        this._curToken
-      ),
-      [TokenType.EQ]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.NOT_EQ]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.LT]: this.parseInfixExpression.bind(this, this._curToken),
-      [TokenType.GT]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.PLUS]: this.parseInfixExpression.bind(this),
+      [TokenType.MINUS]: this.parseInfixExpression.bind(this),
+      [TokenType.SLASH]: this.parseInfixExpression.bind(this),
+      [TokenType.ASTERISK]: this.parseInfixExpression.bind(this),
+      [TokenType.EQ]: this.parseInfixExpression.bind(this),
+      [TokenType.NOT_EQ]: this.parseInfixExpression.bind(this),
+      [TokenType.LT]: this.parseInfixExpression.bind(this),
+      [TokenType.GT]: this.parseInfixExpression.bind(this),
     };
   }
 
