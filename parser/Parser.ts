@@ -4,7 +4,6 @@ import {
   ReturnStatement,
   ExpressionStatement,
   ExpressionType,
-  Expression,
   Identifier,
   PrefixExpression,
 } from '../ast';

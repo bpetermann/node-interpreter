@@ -20,7 +20,7 @@ class PrefixExpression implements NodeType {
   constructor(public token: Token) {}
 
   getString(): string {
-    return `literal: ${this.token.literal} right: ${this._right.getString()}`;
+    return `prefix: ${this.token.literal} expression: ${this._right?.getString()}`;
   }
 
   tokenLiteral(): string {
