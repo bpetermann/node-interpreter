@@ -6,9 +6,10 @@ import {
   ExpressionType,
   Identifier,
   PrefixExpression,
-  IntegerLiteral
+  IntegerLiteral,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
+import { precedences } from './helper';
 import { Lexer } from '../lexer';
 import setError from './error';
 
@@ -62,7 +63,11 @@ export default class Parser {
     }
 
     // Debug
-    console.log(this._program.getString());
+    if (this._errors.length) {
+      console.log(this._errors);
+    } else {
+      console.log(this._program.getString());
+    }
 
     return this._program;
   }
@@ -76,6 +81,14 @@ export default class Parser {
       default:
         return this.parseExpressionStatement();
     }
+  }
+
+  curPrecedence(): number {
+    return precedences(this._curToken.type);
+  }
+
+  peekPercedence(): number {
+    return precedences(this._peekToken.type);
   }
 
   parseLetStatement(): LetStatement | null {
@@ -131,7 +144,7 @@ export default class Parser {
 
     this.nextToken();
 
-    expression._right = this.parseExpression(ExpressionType.PREFIX);
+    expression.right = this.parseExpression(ExpressionType.PREFIX);
 
     return expression;
   }

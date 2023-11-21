@@ -25,13 +25,38 @@ class IntegerLiteral implements Expression {
 
 class PrefixExpression implements Expression {
   _operator: string;
-  _right: Expression;
+  right: Expression;
 
-  constructor(public token: Token) {}
+  constructor(public token: Token) {
+    this._operator = this.token.literal;
+  }
 
   getString(): string {
     return `${PrefixExpression.name}:
-    operator: ${this.token.literal} expression: ${this._right?.getString()}`;
+    operator: ${this.token.literal} expression: ${this.right?.getString()}`;
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  statementNode: () => void;
+}
+
+class InfixExpression implements Expression {
+  left: Expression;
+  operator: string;
+  right: Expression;
+
+  constructor(public token: Token) {
+    this.operator = this.token.literal;
+  }
+
+  getString(): string {
+    return `${InfixExpression.name}:
+    left: ${this.left?.getString()} operator: ${
+      this.token.literal
+    } right: ${this.right?.getString()}`;
   }
 
   tokenLiteral(): string {

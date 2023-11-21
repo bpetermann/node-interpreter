@@ -73,9 +73,20 @@ it('should parse prefix operators', () => {
   `);
   const actual = parser.parse();
 
-  console.log(parser.errors);
-  
   const stmt = actual._statements[0].tokenLiteral();
 
-  expect(stmt).toEqual("!");
+  expect(stmt).toEqual('!');
+});
+
+it('should parse infix operators', () => {
+  const parser = new Parser(`
+  5 + 3;
+  `);
+  const actual = parser.parse();
+
+  const errors = parser.errors;
+
+  const expected = [`no prefix parse function for "+" found`];
+
+  expect(errors).toEqual(expected);
 });
