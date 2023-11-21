@@ -5,6 +5,24 @@ interface Expression extends NodeType {
   statementNode: () => void;
 }
 
+class IntegerLiteral implements Expression {
+  _value: number;
+
+  constructor(public token: Token) {
+    this._value = Number(token.literal);
+  }
+
+  statementNode: () => void;
+
+  getString(): string {
+    return `${IntegerLiteral.name}: value: ${this._value}`;
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+}
+
 class PrefixExpression implements Expression {
   _operator: string;
   _right: Expression;
@@ -12,9 +30,8 @@ class PrefixExpression implements Expression {
   constructor(public token: Token) {}
 
   getString(): string {
-    return `prefix: ${
-      this.token.literal
-    } expression: ${this._right?.getString()}`;
+    return `${PrefixExpression.name}:
+    operator: ${this.token.literal} expression: ${this._right?.getString()}`;
   }
 
   tokenLiteral(): string {
@@ -25,10 +42,14 @@ class PrefixExpression implements Expression {
 }
 
 class Identifier implements Expression {
-  constructor(public token: Token) {}
+  _value: string;
+
+  constructor(public token: Token) {
+    this._value = token.literal;
+  }
 
   getString(): string {
-    return this.token.literal;
+    return `${Identifier.name}: value: ${this.token.literal}`;
   }
 
   tokenLiteral(): string {
@@ -38,4 +59,4 @@ class Identifier implements Expression {
   statementNode: () => void;
 }
 
-export { Expression, Identifier, PrefixExpression };
+export { Expression, Identifier, PrefixExpression, IntegerLiteral };

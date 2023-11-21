@@ -25,7 +25,9 @@ class LetStatement implements Statement {
   }
 
   getString(): string {
-    return `${this.tokenLiteral()} ${this._name.getString()} = ${this._value}`;
+    return `${
+      LetStatement.name
+    }: name: ${this._name.getString()} value: ${this._value?.getString()}`;
   }
 
   tokenLiteral(): string {
@@ -49,7 +51,9 @@ class ReturnStatement implements Statement {
   }
 
   getString(): string {
-    return this.tokenLiteral();
+    return `${ReturnStatement.name}: name: ${this.tokenLiteral()} value: ${
+      this._returnValue
+    }`;
   }
 
   tokenLiteral(): string {
@@ -69,7 +73,7 @@ class ExpressionStatement implements Statement {
   }
 
   getString(): string {
-    return this._expression.getString();
+    return `${ExpressionStatement.name}:  ${this._expression.getString()}`;
   }
 
   tokenLiteral(): string {

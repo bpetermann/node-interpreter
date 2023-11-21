@@ -6,6 +6,7 @@ import {
   ExpressionType,
   Identifier,
   PrefixExpression,
+  IntegerLiteral
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { Lexer } from '../lexer';
@@ -121,8 +122,8 @@ export default class Parser {
     return new Identifier(this._curToken);
   }
 
-  parseIntegerLiteral(): Identifier {
-    return new Identifier(this._curToken);
+  parseIntegerLiteral(): IntegerLiteral {
+    return new IntegerLiteral(this._curToken);
   }
 
   parsePrefixExpression(): PrefixExpression {
