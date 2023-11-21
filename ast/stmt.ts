@@ -1,44 +1,6 @@
+import { Identifier, Expression } from './expression';
+import { Statement } from './types';
 import { Token } from '../token';
-import { NodeType, Statement } from './stmtType';
-
-class Expression implements NodeType {
-  constructor(public token: Token) {}
-
-  getString(): string {
-    return this.token.literal;
-  }
-
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-}
-
-class PrefixExpression implements NodeType {
-  _operator: string;
-  _right: Expression;
-
-  constructor(public token: Token) {}
-
-  getString(): string {
-    return `prefix: ${this.token.literal} expression: ${this._right?.getString()}`;
-  }
-
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-}
-
-class Identifier implements NodeType {
-  constructor(public token: Token) {}
-
-  getString(): string {
-    return this.token.literal;
-  }
-
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-}
 
 class LetStatement implements Statement {
   _name: Identifier;
@@ -55,7 +17,7 @@ class LetStatement implements Statement {
   }
 
   set value(token: Token) {
-    this._value = new Expression(token);
+    this._value = new Identifier(token);
   }
 
   get value(): Expression {
@@ -74,16 +36,16 @@ class LetStatement implements Statement {
 }
 
 class ReturnStatement implements Statement {
-  _value: Expression;
+  _returnValue: Expression;
 
   constructor(public token: Token) {}
 
   set value(token: Token) {
-    this._value = new Expression(token);
+    this._returnValue = new Identifier(token);
   }
 
   get value(): Expression {
-    return this._value;
+    return this._returnValue;
   }
 
   getString(): string {
@@ -98,7 +60,7 @@ class ReturnStatement implements Statement {
 }
 
 class ExpressionStatement implements Statement {
-  _expression: Identifier | Expression | PrefixExpression;
+  _expression: Expression;
 
   constructor(public token: Token) {}
 
@@ -117,11 +79,4 @@ class ExpressionStatement implements Statement {
   statementNode() {}
 }
 
-export {
-  LetStatement,
-  ReturnStatement,
-  ExpressionStatement,
-  Expression,
-  Identifier,
-  PrefixExpression,
-};
+export { LetStatement, ReturnStatement, ExpressionStatement };

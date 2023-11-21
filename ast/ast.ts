@@ -1,4 +1,4 @@
-import { Statement } from './stmtType';
+import { Statement } from './types';
 
 class Program {
   _statements: Statement[];

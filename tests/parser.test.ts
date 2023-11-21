@@ -77,5 +77,5 @@ it('should parse prefix operators', () => {
   
   const stmt = actual.getString();
 
-  expect(stmt).toEqual(['!', '5']);
+  expect(stmt).toEqual(["prefix: ! expression: 5"]);
 });
