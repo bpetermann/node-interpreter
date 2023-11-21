@@ -1,5 +1,5 @@
+import { LetStatement, ExpressionStatement, InfixExpression } from '../ast';
 import { expect } from '@jest/globals';
-import { LetStatement } from '../ast';
 import Parser from '../parser/Parser';
 
 it('should parse input to statements', () => {
@@ -84,9 +84,15 @@ it('should parse infix operators', () => {
   `);
   const actual = parser.parse();
 
-  const errors = parser.errors;
+  const stmt = actual._statements[0];
 
-  const expected = [`no prefix parse function for "+" found`];
-
-  expect(errors).toEqual(expected);
+  expect(stmt).toBeInstanceOf(ExpressionStatement);
+  if (
+    stmt instanceof ExpressionStatement &&
+    stmt._expression instanceof InfixExpression
+  ) {
+    expect(stmt._expression.left.tokenLiteral()).toEqual('5');
+    expect(stmt._expression.operator).toEqual('+');
+    expect(stmt._expression.right.tokenLiteral()).toEqual('3');
+  }
 });

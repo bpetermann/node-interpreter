@@ -48,13 +48,15 @@ class InfixExpression implements Expression {
   operator: string;
   right: Expression;
 
-  constructor(public token: Token) {
+  constructor(public token: Token, left: Expression) {
     this.operator = this.token.literal;
+    this.left = left;
   }
 
   getString(): string {
-    return `${InfixExpression.name}:
-    left: ${this.left?.getString()} operator: ${
+    return `${
+      InfixExpression.name
+    }: left: ${this.left?.getString()} operator: ${
       this.token.literal
     } right: ${this.right?.getString()}`;
   }
@@ -84,4 +86,10 @@ class Identifier implements Expression {
   statementNode: () => void;
 }
 
-export { Expression, Identifier, PrefixExpression, IntegerLiteral };
+export {
+  Expression,
+  Identifier,
+  PrefixExpression,
+  IntegerLiteral,
+  InfixExpression,
+};

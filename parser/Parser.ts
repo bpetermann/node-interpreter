@@ -3,10 +3,12 @@ import {
   Program,
   ReturnStatement,
   ExpressionStatement,
+  Expression,
   ExpressionType,
   Identifier,
   PrefixExpression,
   IntegerLiteral,
+  InfixExpression,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
@@ -24,6 +26,7 @@ export default class Parser {
   _errors: string[];
   _prefixParseFns: { [k: string]: () => Identifier };
   _infixParseFns: { [k: string]: () => Identifier };
+  _leftExpression: Expression;
 
   constructor(input: string) {
     this._position = 0;
@@ -31,13 +34,26 @@ export default class Parser {
     this._program = new Program();
     this._peekToken = this._lexer.tokens[this._position];
     this._errors = [];
+    this._leftExpression = undefined;
     this._prefixParseFns = {
       [TokenType.IDENT]: this.parseIdentifier.bind(this),
       [TokenType.INT]: this.parseIntegerLiteral.bind(this),
       [TokenType.BANG]: this.parsePrefixExpression.bind(this),
       [TokenType.MINUS]: this.parsePrefixExpression.bind(this),
     };
-    this._infixParseFns = {};
+    this._infixParseFns = {
+      [TokenType.PLUS]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.MINUS]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.SLASH]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.ASTERISK]: this.parseInfixExpression.bind(
+        this,
+        this._curToken
+      ),
+      [TokenType.EQ]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.NOT_EQ]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.LT]: this.parseInfixExpression.bind(this, this._curToken),
+      [TokenType.GT]: this.parseInfixExpression.bind(this, this._curToken),
+    };
   }
 
   get errors(): string[] {
@@ -149,7 +165,24 @@ export default class Parser {
     return expression;
   }
 
-  parseExpression(_: ExpressionType) {
+  parseInfixExpression(): InfixExpression {
+    const expression = new InfixExpression(
+      this._curToken,
+      this._leftExpression
+    );
+
+    this._leftExpression = undefined;
+
+    const precedence = precedences(this._curToken.type);
+
+    this.nextToken();
+
+    expression.right = this.parseExpression(precedence);
+
+    return expression;
+  }
+
+  parseExpression(precedence: ExpressionType) {
     const prefix = this._prefixParseFns[this._curToken?.type];
 
     if (!prefix) {
@@ -157,7 +190,25 @@ export default class Parser {
       return null;
     }
 
-    const leftExpression = prefix();
+    let leftExpression = prefix();
+
+    while (
+      !isTokenType(this._peekToken, TokenType.SEMICOLON) &&
+      precedence < this.peekPercedence()
+    ) {
+      const infix =
+        this._infixParseFns[(this._peekToken as any).type as TokenType];
+
+      if (!infix) {
+        return null;
+      }
+
+      this.nextToken();
+
+      this._leftExpression = leftExpression;
+
+      leftExpression = infix();
+    }
 
     return leftExpression;
   }
