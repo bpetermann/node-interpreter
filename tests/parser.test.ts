@@ -1,4 +1,9 @@
-import { LetStatement, ExpressionStatement, InfixExpression } from '../ast';
+import {
+  LetStatement,
+  ExpressionStatement,
+  InfixExpression,
+  BooleanLiteral,
+} from '../ast';
 import { expect } from '@jest/globals';
 import Parser from '../parser/Parser';
 
@@ -45,7 +50,7 @@ it('should have a length of 3', () => {
   expect(stmt).toEqual(3);
 });
 
-it('should parse an string expression', () => {
+it('should parse string expressions', () => {
   const parser = new Parser(`
   foo;
   `);
@@ -56,7 +61,7 @@ it('should parse an string expression', () => {
   expect(stmt).toEqual('foo');
 });
 
-it('should parse an number expression', () => {
+it('should parse number expressions', () => {
   const parser = new Parser(`
   5;
   `);
@@ -67,7 +72,7 @@ it('should parse an number expression', () => {
   expect(stmt).toEqual('5');
 });
 
-it('should parse prefix operators', () => {
+it('should parse prefix expressions', () => {
   const parser = new Parser(`
   !5;
   `);
@@ -78,7 +83,7 @@ it('should parse prefix operators', () => {
   expect(stmt).toEqual('!');
 });
 
-it('should parse infix operators', () => {
+it('should parse infix expressions', () => {
   const parser = new Parser(`
   5 + 3;
   `);
@@ -95,4 +100,16 @@ it('should parse infix operators', () => {
     expect(stmt.expression.operator).toEqual('+');
     expect(stmt.expression.right.tokenLiteral()).toEqual('3');
   }
+});
+
+it('should parse boolean expressions', () => {
+  const parser = new Parser(`
+  true;
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.statements[0] as ExpressionStatement;
+
+  expect(stmt).toBeInstanceOf(ExpressionStatement);
+  expect((stmt.expression as BooleanLiteral).value).toEqual(true);
 });

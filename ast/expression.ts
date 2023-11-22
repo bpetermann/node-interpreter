@@ -3,7 +3,7 @@ import { NodeType } from './types';
 import colors from 'colors';
 
 interface Expression extends NodeType {
-  statementNode: () => void;
+  expressionNode: () => void;
 }
 
 class IntegerLiteral implements Expression {
@@ -13,7 +13,25 @@ class IntegerLiteral implements Expression {
     this.value = Number(token.literal);
   }
 
-  statementNode: () => void;
+  expressionNode: () => void;
+
+  getString(): string {
+    return colors.white(`\n${IntegerLiteral.name}:\nvalue: ${this.value}`);
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+}
+
+class BooleanLiteral implements Expression {
+  value: boolean;
+
+  constructor(public token: Token) {
+    this.value = !!token.literal;
+  }
+
+  expressionNode: () => void;
 
   getString(): string {
     return colors.white(`\n${IntegerLiteral.name}:\nvalue: ${this.value}`);
@@ -36,7 +54,7 @@ class PrefixExpression implements Expression {
     return colors.green(
       `\n${PrefixExpression.name}:\noperator: ${
         this.token.literal
-      }\nexpression:\n${this.right?.getString()}`
+      }\nexpression:${this.right?.getString()}`
     );
   }
 
@@ -44,7 +62,7 @@ class PrefixExpression implements Expression {
     return this.token.literal;
   }
 
-  statementNode: () => void;
+  expressionNode: () => void;
 }
 
 class InfixExpression implements Expression {
@@ -69,7 +87,7 @@ class InfixExpression implements Expression {
     return this.token.literal;
   }
 
-  statementNode: () => void;
+  expressionNode: () => void;
 }
 
 class Identifier implements Expression {
@@ -87,7 +105,7 @@ class Identifier implements Expression {
     return this.token.literal;
   }
 
-  statementNode: () => void;
+  expressionNode: () => void;
 }
 
 export {
@@ -96,4 +114,5 @@ export {
   PrefixExpression,
   IntegerLiteral,
   InfixExpression,
+  BooleanLiteral
 };
