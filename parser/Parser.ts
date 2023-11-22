@@ -41,6 +41,7 @@ export default class Parser {
       [TokenType.MINUS]: this.parsePrefixExpression.bind(this),
       [TokenType.TRUE]: this.parseBoolean.bind(this),
       [TokenType.FALSE]: this.parseBoolean.bind(this),
+      [TokenType.LPAREN]: this.parseGroupedExpression.bind(this),
     };
     this._infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -155,6 +156,20 @@ export default class Parser {
 
   parseBoolean(): BooleanLiteral {
     return new BooleanLiteral(this._curToken);
+  }
+
+  parseGroupedExpression(): Expression | null {
+    this.nextToken();
+
+    const expression = this.parseExpression(ExpressionType.LOWEST);
+
+    if (!isTokenType(this._peekToken, TokenType.RPAREN)) {
+      return null;
+    }
+
+    this.nextToken();
+
+    return expression;
   }
 
   parsePrefixExpression(): PrefixExpression {

@@ -16,7 +16,7 @@ class IntegerLiteral implements Expression {
   expressionNode: () => void;
 
   getString(): string {
-    return colors.white(`\n${IntegerLiteral.name}:\nvalue: ${this.value}`);
+    return colors.white(`${this.value}`);
   }
 
   tokenLiteral(): string {
@@ -34,7 +34,7 @@ class BooleanLiteral implements Expression {
   expressionNode: () => void;
 
   getString(): string {
-    return colors.white(`\n${IntegerLiteral.name}:\nvalue: ${this.value}`);
+    return colors.white(`${this.value}`);
   }
 
   tokenLiteral(): string {
@@ -51,11 +51,7 @@ class PrefixExpression implements Expression {
   }
 
   getString(): string {
-    return colors.green(
-      `\n${PrefixExpression.name}:\noperator: ${
-        this.token.literal
-      }\nexpression:${this.right?.getString()}`
-    );
+    return colors.green(`(${this.token.literal} ${this.right?.getString()})`);
   }
 
   tokenLiteral(): string {
@@ -77,9 +73,9 @@ class InfixExpression implements Expression {
 
   getString(): string {
     return colors.green(
-      `\n${InfixExpression.name}:\nleft: ${this.left?.getString()}\noperator: ${
+      `(${this.left?.getString()} ${
         this.token.literal
-      }\nright: ${this.right?.getString()}`
+      } ${this.right?.getString()})`
     );
   }
 
@@ -98,7 +94,7 @@ class Identifier implements Expression {
   }
 
   getString(): string {
-    return colors.white(`\n${Identifier.name}:\nvalue: ${this.token.literal}`);
+    return colors.white(`${this.token.literal}`);
   }
 
   tokenLiteral(): string {
@@ -114,5 +110,5 @@ export {
   PrefixExpression,
   IntegerLiteral,
   InfixExpression,
-  BooleanLiteral
+  BooleanLiteral,
 };

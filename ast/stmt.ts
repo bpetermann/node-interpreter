@@ -50,9 +50,7 @@ class ExpressionStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return colors.blue(
-      `${ExpressionStatement.name}:\n${this.expression.getString()}`
-    );
+    return colors.blue(`${this.expression.getString()}`);
   }
 
   tokenLiteral(): string {
