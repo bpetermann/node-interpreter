@@ -1,5 +1,5 @@
 import { Token } from '../token';
-import { NodeType } from './types';
+import { NodeType, Statement } from './types';
 import colors from 'colors';
 
 interface Expression extends NodeType {
@@ -104,6 +104,28 @@ class Identifier implements Expression {
   expressionNode: () => void;
 }
 
+class IfExpression implements Expression {
+  condition: Expression;
+  consequence: Statement;
+  alternative?: Statement;
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    return colors.blue(
+      `if ${this.condition.getString()} ${this.consequence.getString()} ${
+        this.alternative ? 'else ' + this.alternative.getString() : ''
+      }`
+    );
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -111,4 +133,5 @@ export {
   IntegerLiteral,
   InfixExpression,
   BooleanLiteral,
+  IfExpression,
 };

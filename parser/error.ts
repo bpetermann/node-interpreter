@@ -1,17 +1,20 @@
 import { Token } from '../token';
 
-type ErrorType = 'expected' | 'parse';
+type ErrorType = 'expected' | 'parse' | 'debug';
 
 type ErrorProps = {
   type?: ErrorType;
   expected?: string;
+  msg?: string;
   got: Token;
 };
 
-const setError = ({ type, expected, got }: ErrorProps) => {
+const setError = ({ type, expected, msg, got }: ErrorProps) => {
   switch (type) {
     case 'parse':
       return `no prefix parse function for "${got.literal}" found`;
+    case 'debug':
+      return msg;
     default:
       return `expected next token to be "${expected}" got "${got.literal}" instead`;
   }

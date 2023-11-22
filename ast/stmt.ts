@@ -60,4 +60,26 @@ class ExpressionStatement implements Statement {
   statementNode() {}
 }
 
-export { LetStatement, ReturnStatement, ExpressionStatement };
+class BlockStatement implements Statement {
+  statements: Statement[];
+
+  constructor(public token: Token) {
+    this.statements = [];
+  }
+
+  add(stmt: Statement) {
+    this.statements.push(stmt);
+  }
+
+  getString(): string {
+    return `${this.statements.map((stmt) => stmt.getString()).join(', ')}`;
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  statementNode() {}
+}
+
+export { LetStatement, ReturnStatement, ExpressionStatement, BlockStatement };

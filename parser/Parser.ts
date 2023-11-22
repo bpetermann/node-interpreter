@@ -10,6 +10,8 @@ import {
   IntegerLiteral,
   InfixExpression,
   BooleanLiteral,
+  IfExpression,
+  BlockStatement,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
@@ -42,6 +44,7 @@ export default class Parser {
       [TokenType.TRUE]: this.parseBoolean.bind(this),
       [TokenType.FALSE]: this.parseBoolean.bind(this),
       [TokenType.LPAREN]: this.parseGroupedExpression.bind(this),
+      [TokenType.IF]: this.parseIfExpression.bind(this),
     };
     this._infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -106,6 +109,15 @@ export default class Parser {
     return precedences(this._peekToken.type);
   }
 
+  expectPeek(t: TokenType): boolean {
+    if (isTokenType(this._peekToken, t)) {
+      this.nextToken();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   parseLetStatement(): LetStatement | null {
     const stmt = new LetStatement(this._curToken);
 
@@ -158,16 +170,59 @@ export default class Parser {
     return new BooleanLiteral(this._curToken);
   }
 
+  parseBlockStatement(): BlockStatement {
+    const block = new BlockStatement(this._curToken);
+
+    this.nextToken();
+
+    while (
+      !isTokenType(this._curToken, TokenType.RBRACE) &&
+      !isTokenType(this._curToken, TokenType.EOF)
+    ) {
+      const stmt = this.parseStatement();
+
+      if (stmt) {
+        block.add(stmt);
+      }
+
+      this.nextToken();
+    }
+
+    return block;
+  }
+
+  parseIfExpression(): IfExpression | null {
+    const expression = new IfExpression(this._curToken);
+
+    if (!this.expectPeek(TokenType.LPAREN)) {
+      return null;
+    }
+
+    this.nextToken();
+
+    expression.condition = this.parseExpression(ExpressionType.LOWEST);
+
+    if (!this.expectPeek(TokenType.RPAREN)) {
+      return null;
+    }
+
+    if (!this.expectPeek(TokenType.LBRACE)) {
+      return null;
+    }
+
+    expression.consequence = this.parseBlockStatement();
+
+    return expression;
+  }
+
   parseGroupedExpression(): Expression | null {
     this.nextToken();
 
     const expression = this.parseExpression(ExpressionType.LOWEST);
 
-    if (!isTokenType(this._peekToken, TokenType.RPAREN)) {
+    if (!this.expectPeek(TokenType.RPAREN)) {
       return null;
     }
-
-    this.nextToken();
 
     return expression;
   }
