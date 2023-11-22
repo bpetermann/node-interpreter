@@ -18,6 +18,7 @@
     "ts-node": "^10.9.1"
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "typescript": "^5.2.2"
   }
 }

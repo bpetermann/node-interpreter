@@ -15,7 +15,7 @@ class IntegerLiteral implements Expression {
   statementNode: () => void;
 
   getString(): string {
-    return `${IntegerLiteral.name}: value: ${this.value}`;
+    return `${IntegerLiteral.name}:\nvalue: ${this.value}`;
   }
 
   tokenLiteral(): string {
@@ -32,8 +32,7 @@ class PrefixExpression implements Expression {
   }
 
   getString(): string {
-    return `${PrefixExpression.name}:
-    operator: ${this.token.literal} expression: ${this.right?.getString()}`;
+    return `${PrefixExpression.name}:\noperator: ${this.token.literal}\nexpression:\n${this.right?.getString()}`;
   }
 
   tokenLiteral(): string {
@@ -54,11 +53,11 @@ class InfixExpression implements Expression {
   }
 
   getString(): string {
-    return `${
+    return `\n${
       InfixExpression.name
-    }: left: ${this.left?.getString()} operator: ${
+    }:\nleft: ${this.left?.getString()} operator: ${
       this.token.literal
-    } right: ${this.right?.getString()}`;
+    }\nright: ${this.right?.getString()}`;
   }
 
   tokenLiteral(): string {
@@ -76,7 +75,7 @@ class Identifier implements Expression {
   }
 
   getString(): string {
-    return `${Identifier.name}: value: ${this.token.literal}`;
+    return `${Identifier.name}:\nvalue: ${this.token.literal}`;
   }
 
   tokenLiteral(): string {

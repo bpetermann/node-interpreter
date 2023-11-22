@@ -14,8 +14,8 @@ class Program {
     return this._statements;
   }
 
-  getString() {
-    return this._statements.map((stmt) => stmt.getString());
+  getString(): string {
+    return this._statements.map((stmt) => stmt.getString()).join('\n');
   }
 }
 
