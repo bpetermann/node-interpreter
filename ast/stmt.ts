@@ -1,6 +1,7 @@
 import { Identifier, Expression } from './expression';
 import { Statement } from './types';
 import { Token } from '../token';
+import colors from 'colors';
 
 class LetStatement implements Statement {
   name: Identifier;
@@ -9,9 +10,11 @@ class LetStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return `${
-      LetStatement.name
-    }: name: ${this.name.getString()}\nvalue: ${this.value?.getString()}`;
+    return colors.blue(
+      `${
+        LetStatement.name
+      }:\nname: ${this.name.getString()}\nvalue: ${this.value?.getString()}`
+    );
   }
 
   tokenLiteral(): string {
@@ -27,7 +30,7 @@ class ReturnStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return (
+    return colors.blue(
       `${ReturnStatement.name}:\nname: ${this.tokenLiteral()}\nvalue: ${
         this.returnValue
       }`
@@ -47,7 +50,9 @@ class ExpressionStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return `${ExpressionStatement.name}:\n${this.expression.getString()}`;
+    return colors.blue(
+      `${ExpressionStatement.name}:\n${this.expression.getString()}`
+    );
   }
 
   tokenLiteral(): string {

@@ -1,5 +1,6 @@
 import { Token } from '../token';
 import { NodeType } from './types';
+import colors from 'colors';
 
 interface Expression extends NodeType {
   statementNode: () => void;
@@ -15,7 +16,7 @@ class IntegerLiteral implements Expression {
   statementNode: () => void;
 
   getString(): string {
-    return `${IntegerLiteral.name}:\nvalue: ${this.value}`;
+    return colors.white(`\n${IntegerLiteral.name}:\nvalue: ${this.value}`);
   }
 
   tokenLiteral(): string {
@@ -32,7 +33,11 @@ class PrefixExpression implements Expression {
   }
 
   getString(): string {
-    return `${PrefixExpression.name}:\noperator: ${this.token.literal}\nexpression:\n${this.right?.getString()}`;
+    return colors.green(
+      `\n${PrefixExpression.name}:\noperator: ${
+        this.token.literal
+      }\nexpression:\n${this.right?.getString()}`
+    );
   }
 
   tokenLiteral(): string {
@@ -53,11 +58,11 @@ class InfixExpression implements Expression {
   }
 
   getString(): string {
-    return `\n${
-      InfixExpression.name
-    }:\nleft: ${this.left?.getString()} operator: ${
-      this.token.literal
-    }\nright: ${this.right?.getString()}`;
+    return colors.green(
+      `\n${InfixExpression.name}:\nleft: ${this.left?.getString()}\noperator: ${
+        this.token.literal
+      }\nright: ${this.right?.getString()}`
+    );
   }
 
   tokenLiteral(): string {
@@ -75,7 +80,7 @@ class Identifier implements Expression {
   }
 
   getString(): string {
-    return `${Identifier.name}:\nvalue: ${this.token.literal}`;
+    return colors.white(`\n${Identifier.name}:\nvalue: ${this.token.literal}`);
   }
 
   tokenLiteral(): string {
