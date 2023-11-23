@@ -126,6 +126,27 @@ class IfExpression implements Expression {
   expressionNode: () => void;
 }
 
+class FunctionLiteral implements Expression {
+  parameters: Identifier[];
+  body: Statement;
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    return colors.magenta(
+      `${this.tokenLiteral()}(${this.parameters
+        .map((param) => param.getString())
+        .join(', ')}) {${this.body.getString()}}`
+    );
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -134,4 +155,5 @@ export {
   InfixExpression,
   BooleanLiteral,
   IfExpression,
+  FunctionLiteral,
 };

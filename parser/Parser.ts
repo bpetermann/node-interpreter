@@ -12,6 +12,7 @@ import {
   BooleanLiteral,
   IfExpression,
   BlockStatement,
+  FunctionLiteral,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
@@ -45,6 +46,7 @@ export default class Parser {
       [TokenType.FALSE]: this.parseBoolean.bind(this),
       [TokenType.LPAREN]: this.parseGroupedExpression.bind(this),
       [TokenType.IF]: this.parseIfExpression.bind(this),
+      [TokenType.FUNCTION]: this.parseFunction.bind(this),
     };
     this._infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -213,7 +215,6 @@ export default class Parser {
     expression.consequence = this.parseBlockStatement();
 
     if (isTokenType(this._peekToken, TokenType.ELSE)) {
-      
       this.nextToken();
 
       if (!this.expectPeek(TokenType.LBRACE)) {
@@ -224,6 +225,51 @@ export default class Parser {
     }
 
     return expression;
+  }
+
+  parseFunctionParameters(): Identifier[] {
+    const identifiers = [];
+
+    if (isTokenType(this._peekToken, TokenType.RPAREN)) {
+      this.nextToken();
+      return identifiers;
+    }
+
+    this.nextToken();
+
+    const ident = new Identifier(this._curToken);
+    identifiers.push(ident);
+
+    while (isTokenType(this._peekToken, TokenType.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      const ident = new Identifier(this._curToken);
+      identifiers.push(ident);
+    }
+
+    if (!this.expectPeek(TokenType.RPAREN)) {
+      return null;
+    }
+
+    return identifiers;
+  }
+
+  parseFunction(): FunctionLiteral | null {
+    const func = new FunctionLiteral(this._curToken);
+
+    if (!this.expectPeek(TokenType.LPAREN)) {
+      return null;
+    }
+
+    func.parameters = this.parseFunctionParameters();
+
+    if (!this.expectPeek(TokenType.LBRACE)) {
+      return null;
+    }
+
+    func.body = this.parseBlockStatement();
+
+    return func;
   }
 
   parseGroupedExpression(): Expression | null {

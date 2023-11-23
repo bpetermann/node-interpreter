@@ -6,6 +6,7 @@ export {
   InfixExpression,
   BooleanLiteral,
   IfExpression,
+  FunctionLiteral,
 } from './expression';
 export {
   LetStatement,
