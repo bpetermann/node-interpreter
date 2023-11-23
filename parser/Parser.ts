@@ -13,6 +13,7 @@ import {
   IfExpression,
   BlockStatement,
   FunctionLiteral,
+  CallExpression,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
@@ -57,6 +58,7 @@ export default class Parser {
       [TokenType.NOT_EQ]: this.parseInfixExpression.bind(this),
       [TokenType.LT]: this.parseInfixExpression.bind(this),
       [TokenType.GT]: this.parseInfixExpression.bind(this),
+      [TokenType.LPAREN]: this.parseCallExpression.bind(this),
     };
   }
 
@@ -116,6 +118,7 @@ export default class Parser {
       this.nextToken();
       return true;
     } else {
+      this._errors.push(setError({ expected: t, got: this._peekToken }));
       return false;
     }
   }
@@ -223,6 +226,40 @@ export default class Parser {
 
       expression.alternative = this.parseBlockStatement();
     }
+
+    return expression;
+  }
+
+  parseCallArguments(): Expression[] {
+    const args = [];
+
+    if (isTokenType(this._peekToken, TokenType.RPAREN)) {
+      this.nextToken();
+      return args;
+    }
+
+    this.nextToken();
+
+    args.push(this.parseExpression(ExpressionType.LOWEST));
+
+    while (isTokenType(this._peekToken, TokenType.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      args.push(this.parseExpression(ExpressionType.LOWEST));
+    }
+
+    if (!this.expectPeek(TokenType.RPAREN)) {
+      return null;
+    }
+
+    return args;
+  }
+
+  parseCallExpression(fn: Expression): CallExpression {
+    const expression = new CallExpression(this._curToken);
+    expression.function = fn;
+
+    expression.arguments = this.parseCallArguments();
 
     return expression;
   }

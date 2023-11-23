@@ -147,6 +147,27 @@ class FunctionLiteral implements Expression {
   expressionNode: () => void;
 }
 
+class CallExpression implements Expression {
+  function: Expression;
+  arguments: Expression[];
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    return colors.magenta(
+      `${this.function.getString()}(${this.arguments
+        .map((param) => param.getString())
+        .join(', ')})`
+    );
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -156,4 +177,5 @@ export {
   BooleanLiteral,
   IfExpression,
   FunctionLiteral,
+  CallExpression,
 };
