@@ -1,26 +1,24 @@
-
 import Parser from '../parser/Parser';
 import { TokenType } from '../token';
 import readline from 'readline';
 export default class Repl {
-  private _input: string;
+  private print(line: string) {
+    const parser = new Parser(line);
+    const program = parser.parse();
 
-  constructor() {
-    this._input = '';
-  }
-
-  private print() {
-    const parser = new Parser(this._input);
-    parser.parse();
-    process.exit(0);
+    if (parser.errors.length) {
+      console.log(parser.errors);
+    } else {
+      console.log(program.getString());
+    }
   }
 
   private processInput(input: string) {
     if (input.trim().toUpperCase() === TokenType.EOF) {
-      this.print();
+      process.exit(0);
     }
 
-    this._input += input;
+    this.print(input);
 
     this.start();
   }

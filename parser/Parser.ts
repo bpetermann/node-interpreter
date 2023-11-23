@@ -84,13 +84,6 @@ export default class Parser {
       this.nextToken();
     }
 
-    // Debug
-    if (this._errors.length) {
-      console.log(this._errors);
-    } else {
-      console.log(this._program.getString());
-    }
-
     return this._program;
   }
 
