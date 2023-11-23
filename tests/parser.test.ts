@@ -37,7 +37,7 @@ it('should add an error message', () => {
   expect(errors).toEqual(expected);
 });
 
-it('should have a length of 3', () => {
+it('should parse all statements', () => {
   const parser = new Parser(`
   return 5;
   return 10;
@@ -102,7 +102,7 @@ it('should parse infix expressions', () => {
   }
 });
 
-it('should parse boolean expressions', () => {
+it('should parse boolean literals', () => {
   const parser = new Parser(`
   true;
   `);
@@ -112,4 +112,40 @@ it('should parse boolean expressions', () => {
 
   expect(stmt).toBeInstanceOf(ExpressionStatement);
   expect((stmt.expression as BooleanLiteral).value).toEqual(true);
+});
+
+it('should parse grouped expressions', () => {
+  const parser = new Parser(`
+  1 + (2 + 3) + 4;
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.getString();
+
+  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
+  expect(cleanStmt.trim()).toBe('((1 + (2 + 3)) + 4)');
+});
+
+it('should parse if expressions', () => {
+  const parser = new Parser(`
+  if (x > y) { x } else { y };
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.getString();
+
+  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
+  expect(cleanStmt.trim()).toBe('if (x > y) x else y');
+});
+
+it('should parse if expressions', () => {
+  const parser = new Parser(`
+  fn(x, y) { x + y; }
+  `);
+  const actual = parser.parse();
+
+  const stmt = actual.getString();
+
+  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
+  expect(cleanStmt.trim()).toBe('fn(x, y) {(x + y)}');
 });
