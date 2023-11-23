@@ -28,7 +28,7 @@ class ReturnStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return colors.magenta(`return ${this.returnValue}`);
+    return colors.magenta(`return ${this.returnValue.getString()}`);
   }
 
   tokenLiteral(): string {

@@ -126,25 +126,21 @@ export default class Parser {
   parseLetStatement(): LetStatement | null {
     const stmt = new LetStatement(this._curToken);
 
-    if (!isTokenType(this._peekToken, TokenType.IDENT)) {
-      this._errors.push(
-        setError({ expected: TokenType.IDENT, got: this._peekToken })
-      );
+    if (!this.expectPeek(TokenType.IDENT)) {
       return null;
     }
 
-    stmt.name = new Identifier(this._peekToken);
+    stmt.name = new Identifier(this._curToken);
+
+    if (!this.expectPeek(TokenType.ASSIGN)) {
+      return null;
+    }
 
     this.nextToken();
 
-    if (!isTokenType(this._peekToken, TokenType.ASSIGN)) {
-      this._errors.push(
-        setError({ expected: TokenType.ASSIGN, got: this._peekToken })
-      );
-      return null;
-    }
+    stmt.value = this.parseExpression(ExpressionType.LOWEST);
 
-    while (!isTokenType(this._curToken, TokenType.SEMICOLON)) {
+    if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
       this.nextToken();
     }
 
@@ -156,7 +152,9 @@ export default class Parser {
 
     this.nextToken();
 
-    while (!isTokenType(this._curToken, TokenType.SEMICOLON)) {
+    stmt.returnValue = this.parseExpression(ExpressionType.LOWEST);
+
+    if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
       this.nextToken();
     }
 
