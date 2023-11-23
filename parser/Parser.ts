@@ -212,6 +212,17 @@ export default class Parser {
 
     expression.consequence = this.parseBlockStatement();
 
+    if (isTokenType(this._peekToken, TokenType.ELSE)) {
+      
+      this.nextToken();
+
+      if (!this.expectPeek(TokenType.LBRACE)) {
+        return null;
+      }
+
+      expression.alternative = this.parseBlockStatement();
+    }
+
     return expression;
   }
 

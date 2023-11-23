@@ -10,10 +10,8 @@ class LetStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return colors.blue(
-      `${
-        LetStatement.name
-      }:\nname: ${this.name.getString()}\nvalue: ${this.value?.getString()}`
+    return colors.magenta(
+      `let ${this.name.getString()} = ${this.value?.getString()}`
     );
   }
 
@@ -30,11 +28,7 @@ class ReturnStatement implements Statement {
   constructor(public token: Token) {}
 
   getString(): string {
-    return colors.blue(
-      `${ReturnStatement.name}:\nname: ${this.tokenLiteral()}\nvalue: ${
-        this.returnValue
-      }`
-    );
+    return colors.magenta(`return ${this.returnValue}`);
   }
 
   tokenLiteral(): string {

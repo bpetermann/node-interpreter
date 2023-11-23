@@ -16,7 +16,7 @@ class IntegerLiteral implements Expression {
   expressionNode: () => void;
 
   getString(): string {
-    return colors.white(`${this.value}`);
+    return colors.blue(`${this.value}`);
   }
 
   tokenLiteral(): string {
@@ -34,7 +34,7 @@ class BooleanLiteral implements Expression {
   expressionNode: () => void;
 
   getString(): string {
-    return colors.white(`${this.value}`);
+    return colors.blue(`${this.value}`);
   }
 
   tokenLiteral(): string {
@@ -94,7 +94,7 @@ class Identifier implements Expression {
   }
 
   getString(): string {
-    return colors.white(`${this.token.literal}`);
+    return colors.blue(`${this.token.literal}`);
   }
 
   tokenLiteral(): string {
@@ -112,7 +112,7 @@ class IfExpression implements Expression {
   constructor(public token: Token) {}
 
   getString(): string {
-    return colors.blue(
+    return colors.magenta(
       `if ${this.condition.getString()} ${this.consequence.getString()} ${
         this.alternative ? 'else ' + this.alternative.getString() : ''
       }`
