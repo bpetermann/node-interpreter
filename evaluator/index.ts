@@ -1,6 +1,7 @@
 import {
   BooleanLiteral,
   ExpressionStatement,
+  InfixExpression,
   IntegerLiteral,
   NodeType,
   PrefixExpression,
@@ -31,6 +32,11 @@ class Eval {
         return new IntegerObject(+node.tokenLiteral());
       case node instanceof BooleanLiteral:
         return node.tokenLiteral() === 'true' ? TRUE : FALSE;
+      case node instanceof InfixExpression:
+        const infix = node as InfixExpression;
+        const l = this.evaluate(infix.left);
+        const r = this.evaluate(infix.right);
+        return this.evalInfixExpression(infix.operator, l, r);
       case node instanceof PrefixExpression:
         const right = this.evaluate((node as PrefixExpression).right);
         return this.evalPrefixExpression(
@@ -45,6 +51,38 @@ class Eval {
   evalStatements(stmts: Statement[]): Object {
     // to do: return all stmts
     return stmts.map((stmt) => this.evaluate(stmt))[0];
+  }
+
+  evalIntegerInfixExpression(
+    operator: string,
+    left: Object,
+    right: Object
+  ): Object {
+    const leftVal = (left as IntegerObject).value;
+    const rightVal = (right as IntegerObject).value;
+
+    switch (operator) {
+      case TokenType.PLUS:
+        return new IntegerObject(leftVal + rightVal);
+      case TokenType.MINUS:
+        return new IntegerObject(leftVal - rightVal);
+      case TokenType.ASTERISK:
+        return new IntegerObject(leftVal * rightVal);
+      case TokenType.SLASH:
+        return new IntegerObject(leftVal / rightVal);
+      default:
+        return NULL;
+    }
+  }
+
+  evalInfixExpression(operator: string, left: Object, right: Object): Object {
+    switch (true) {
+      case left.type() === ObjectType.INTEGER_OBJ &&
+        right.type() === ObjectType.INTEGER_OBJ:
+        return this.evalIntegerInfixExpression(operator, left, right);
+      default:
+        return null;
+    }
   }
 
   bangOperatorExpression(right: Object): Object {
