@@ -43,4 +43,4 @@ class NullObject implements Object {
   }
 }
 
-export { Object, IntegerObject, BooleanObject, NullObject };
+export { Object, ObjectType, IntegerObject, BooleanObject, NullObject };

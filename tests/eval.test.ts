@@ -1,9 +1,8 @@
 import { IntegerObject } from '../object';
 import { expect } from '@jest/globals';
-import {Eval} from '../evaluator';
+import { Eval } from '../evaluator';
 import { Program } from '../ast';
-import {Parser} from '../parser';
-
+import { Parser } from '../parser';
 
 it('should parse input to statements', () => {
   const parser = new Parser(`5`);
@@ -18,4 +17,13 @@ it('should parse input to statements', () => {
   const expected = 5;
 
   expect(obj.value).toEqual(expected);
+});
+
+it('should parse bang prefix', () => {
+  const parser = new Parser(`!true;`);
+  const program: Program = parser.parse();
+
+  const obj = new Eval().evaluate(program);
+
+  expect(obj.inspect()).toEqual('false');
 });

@@ -7,7 +7,13 @@ import {
   Program,
   Statement,
 } from '../ast';
-import { BooleanObject, IntegerObject, NullObject, Object } from '../object';
+import {
+  ObjectType,
+  BooleanObject,
+  IntegerObject,
+  NullObject,
+  Object,
+} from '../object';
 import { TokenType } from '../token';
 
 const TRUE = new BooleanObject(true);
@@ -41,16 +47,7 @@ class Eval {
     return stmts.map((stmt) => this.evaluate(stmt))[0];
   }
 
-  evalPrefixExpression(operator: string, right: Object): Object {
-    switch (operator) {
-      case TokenType.BANG:
-        return this.evalBangOperatorExpression(right);
-      default:
-        return null;
-    }
-  }
-
-  evalBangOperatorExpression(right: Object): Object {
+  bangOperatorExpression(right: Object): Object {
     switch (right) {
       case TRUE:
         return FALSE;
@@ -60,6 +57,25 @@ class Eval {
         return TRUE;
       default:
         return FALSE;
+    }
+  }
+
+  minusPrefixOperatorExpression(right: Object): Object {
+    if (right.type() !== ObjectType.INTEGER_OBJ) {
+      return NULL;
+    }
+    const value = (right as IntegerObject).value;
+    return new IntegerObject(-value);
+  }
+
+  evalPrefixExpression(operator: string, right: Object): Object {
+    switch (operator) {
+      case TokenType.BANG:
+        return this.bangOperatorExpression(right);
+      case TokenType.MINUS:
+        return this.minusPrefixOperatorExpression(right);
+      default:
+        return null;
     }
   }
 }
