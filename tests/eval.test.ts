@@ -1,8 +1,8 @@
 import { IntegerObject } from '../object';
 import { expect } from '@jest/globals';
-import { Eval } from '../evaluator';
-import { Program } from '../ast';
 import { Parser } from '../parser';
+import { Program } from '../ast';
+import { Eval } from '../eval';
 
 it('should parse input to statements', () => {
   const parser = new Parser(`5`);
