@@ -22,7 +22,7 @@ class IntegerObject implements Object {
 }
 
 class BooleanObject implements Object {
-  value: boolean;
+  constructor(public value: boolean) {}
 
   type(): ObjectType {
     return ObjectType.BOOLEAN_OBJ;

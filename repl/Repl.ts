@@ -1,9 +1,9 @@
-import Parser from '../parser/Parser';
 import { TokenType } from '../token';
-import evaluate from '../evaluator';
+import { Eval } from '../evaluator';
+import { Parser } from '../parser';
 import readline from 'readline';
 export default class Repl {
-  private print(line: string) {
+;  private print(line: string) {
     const parser = new Parser(line);
     const program = parser.parse();
 
@@ -12,7 +12,7 @@ export default class Repl {
       return;
     }
 
-    const evaluated = evaluate(program);
+    const evaluated = new Eval().evaluate(program);
     console.log(evaluated.inspect());
   }
 

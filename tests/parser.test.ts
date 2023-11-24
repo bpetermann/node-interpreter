@@ -5,7 +5,7 @@ import {
   BooleanLiteral,
 } from '../ast';
 import { expect } from '@jest/globals';
-import Parser from '../parser/Parser';
+import { Parser } from '../parser';
 
 it('should parse input to statements', () => {
   const parser = new Parser(`
