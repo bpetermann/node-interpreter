@@ -1,5 +1,6 @@
 import Parser from '../parser/Parser';
 import { TokenType } from '../token';
+import evaluate from '../evaluator';
 import readline from 'readline';
 export default class Repl {
   private print(line: string) {
@@ -8,9 +9,11 @@ export default class Repl {
 
     if (parser.errors.length) {
       console.log(parser.errors);
-    } else {
-      console.log(program.getString());
+      return;
     }
+
+    const evaluated = evaluate(program);
+    console.log(evaluated.inspect());
   }
 
   private processInput(input: string) {
