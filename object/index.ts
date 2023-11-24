@@ -10,7 +10,7 @@ interface Object {
 }
 
 class IntegerObject implements Object {
-  value: number;
+  constructor(public value: number) {}
 
   type(): ObjectType {
     return ObjectType.INTEGER_OBJ;
@@ -42,3 +42,5 @@ class NullObject implements Object {
     return `null`;
   }
 }
+
+export { Object, IntegerObject, BooleanObject, NullObject };

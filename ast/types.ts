@@ -7,6 +7,10 @@ interface Statement extends NodeType {
   statementNode: () => void;
 }
 
+interface Expression extends NodeType {
+  expressionNode: () => void;
+}
+
 enum ExpressionType {
   LOWEST,
   EQUALS,
@@ -18,5 +22,4 @@ enum ExpressionType {
   CALL,
 }
 
-
-export { NodeType, Statement, ExpressionType };
+export { NodeType, Statement, ExpressionType, Expression };

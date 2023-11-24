@@ -1,10 +1,6 @@
+import { Expression, Statement } from './types';
 import { Token } from '../token';
-import { NodeType, Statement } from './types';
 import colors from 'colors';
-
-interface Expression extends NodeType {
-  expressionNode: () => void;
-}
 
 class IntegerLiteral implements Expression {
   value: number;

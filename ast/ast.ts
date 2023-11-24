@@ -1,9 +1,12 @@
-import { Statement } from './types';
+import { NodeType, Statement } from './types';
 
-class Program {
+class Program implements NodeType {
   private _statements: Statement[];
   constructor() {
     this._statements = [];
+  }
+  tokenLiteral(): string {
+    return this._statements.length ? this._statements[0].tokenLiteral() : ``;
   }
 
   add(statement: Statement) {
