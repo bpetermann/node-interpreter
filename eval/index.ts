@@ -1,6 +1,8 @@
 import {
+  BlockStatement,
   BooleanLiteral,
   ExpressionStatement,
+  IfExpression,
   InfixExpression,
   IntegerLiteral,
   NodeType,
@@ -43,6 +45,10 @@ class Eval {
           (node as PrefixExpression).operator,
           right
         );
+      case node instanceof BlockStatement:
+        return this.evalStatements((node as BlockStatement).statements);
+      case node instanceof IfExpression:
+        return this.evalIfExpression(node as IfExpression);
       default:
         return NULL;
     }
@@ -51,6 +57,31 @@ class Eval {
   evalStatements(stmts: Statement[]): Object {
     // to do: return all stmts
     return stmts.map((stmt) => this.evaluate(stmt))[0];
+  }
+
+  isTruthy(object: Object): boolean {
+    switch (object) {
+      case NULL:
+        return false;
+      case TRUE:
+        return true;
+      case FALSE:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  evalIfExpression(expression: IfExpression): Object {
+    const condition = this.evaluate(expression.condition);
+
+    if (this.isTruthy(condition)) {
+      return this.evaluate(expression.consequence);
+    } else if (expression.alternative) {
+      return this.evaluate(expression.alternative);
+    } else {
+      return NULL;
+    }
   }
 
   booleanToBooleanObject(assertion: boolean): BooleanObject {
