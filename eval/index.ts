@@ -31,7 +31,7 @@ class Eval {
       case node instanceof IntegerLiteral:
         return new IntegerObject(+node.tokenLiteral());
       case node instanceof BooleanLiteral:
-        return node.tokenLiteral() === 'true' ? TRUE : FALSE;
+        return this.booleanToBooleanObject(node.tokenLiteral() === 'true');
       case node instanceof InfixExpression:
         const infix = node as InfixExpression;
         const l = this.evaluate(infix.left);
@@ -53,6 +53,10 @@ class Eval {
     return stmts.map((stmt) => this.evaluate(stmt))[0];
   }
 
+  booleanToBooleanObject(assertion: boolean): BooleanObject {
+    return assertion ? TRUE : FALSE;
+  }
+
   evalIntegerInfixExpression(
     operator: string,
     left: Object,
@@ -70,6 +74,14 @@ class Eval {
         return new IntegerObject(leftVal * rightVal);
       case TokenType.SLASH:
         return new IntegerObject(leftVal / rightVal);
+      case TokenType.LT:
+        return this.booleanToBooleanObject(leftVal < rightVal);
+      case TokenType.GT:
+        return this.booleanToBooleanObject(leftVal > rightVal);
+      case TokenType.EQ:
+        return this.booleanToBooleanObject(leftVal === rightVal);
+      case TokenType.NOT_EQ:
+        return this.booleanToBooleanObject(leftVal !== rightVal);
       default:
         return NULL;
     }
@@ -80,6 +92,10 @@ class Eval {
       case left.type() === ObjectType.INTEGER_OBJ &&
         right.type() === ObjectType.INTEGER_OBJ:
         return this.evalIntegerInfixExpression(operator, left, right);
+      case operator == TokenType.EQ:
+        return this.booleanToBooleanObject(left === right);
+      case operator == TokenType.NOT_EQ:
+        return this.booleanToBooleanObject(left !== right);
       default:
         return null;
     }
