@@ -1,12 +1,15 @@
+import { Environment } from '../object';
 import { TokenType } from '../token';
 import { Parser } from '../parser';
 import readline from 'readline';
 import { Eval } from '../eval';
 export default class Repl {
+  env: Environment;
   private _eval: Eval;
 
   constructor() {
-    this._eval = new Eval();
+    this.env = new Environment({});
+    this._eval = new Eval(this.env);
   }
 
   private print(line: string) {

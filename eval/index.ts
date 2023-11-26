@@ -2,9 +2,11 @@ import {
   BlockStatement,
   BooleanLiteral,
   ExpressionStatement,
+  Identifier,
   IfExpression,
   InfixExpression,
   IntegerLiteral,
+  LetStatement,
   NodeType,
   PrefixExpression,
   Program,
@@ -20,6 +22,7 @@ import {
   ReturnValueObject,
   ErrorObject,
 } from '../object';
+import { Environment } from '../object';
 import { TokenType } from '../token';
 
 const TRUE = new BooleanObject(true);
@@ -27,6 +30,12 @@ const FALSE = new BooleanObject(false);
 const NULL = new NullObject();
 
 class Eval {
+  private _env: Environment;
+
+  constructor(env: Environment) {
+    this._env = env;
+  }
+
   evaluate(program: Program): Object[] {
     const results = program.statements.map((stmt) => this.evaluateNode(stmt));
     const returnObject = results.find(
@@ -71,6 +80,15 @@ class Eval {
         const val = this.evaluateNode((node as ReturnStatement).returnValue);
         if (this.isError(val)) return val;
         return new ReturnValueObject(val);
+      case node instanceof Identifier:
+        return this.evalIdentifier(node as Identifier);
+      case node instanceof LetStatement:
+        const letStmt = node as LetStatement;
+        const letValue = this.evaluateNode(letStmt.value);
+        if (this.isError(letValue)) {
+          return letValue;
+        }
+        this._env.set(letStmt.name.value, letValue);
       default:
         return NULL;
     }
@@ -99,6 +117,16 @@ class Eval {
       return obj.type() === ObjectType.ERROR_OBJ;
     }
     return false;
+  }
+
+  evalIdentifier(node: Identifier): Object {
+    const value = this._env.get(node.value);
+
+    if (!value) {
+      return this.newError(`identifier not found: ${node.value}`);
+    }
+
+    return value;
   }
 
   isTruthy(object: Object): boolean {
