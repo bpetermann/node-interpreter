@@ -8,7 +8,7 @@ it('should parse input to statements', () => {
   const parser = new Parser(`5`);
   const program: Program = parser.parse();
 
-  const obj = new Eval().evaluate(program);
+  const obj = new Eval().evaluate(program)[0];
 
   if (!(obj instanceof IntegerObject)) {
     throw new Error('Object is not an integer');
@@ -23,7 +23,7 @@ it('should parse bang prefix expressions', () => {
   const parser = new Parser(`!true;`);
   const program: Program = parser.parse();
 
-  const obj = new Eval().evaluate(program);
+  const obj = new Eval().evaluate(program)[0];
 
   expect(obj.inspect()).toEqual('false');
 });
@@ -33,7 +33,7 @@ it('should parse infix expressions', () => {
   const expected = 50;
 
   const program: Program = parser.parse();
-  const obj = new Eval().evaluate(program);
+  const obj = new Eval().evaluate(program)[0];
 
   if (!(obj instanceof IntegerObject)) {
     throw new Error('Object is not an integer');
@@ -47,7 +47,7 @@ it('should parse boolean expressions', () => {
   const expected = true;
 
   const program: Program = parser.parse();
-  const obj = new Eval().evaluate(program);
+  const obj = new Eval().evaluate(program)[0];
 
   if (!(obj instanceof BooleanObject)) {
     throw new Error('Object is not an boolean');

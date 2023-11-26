@@ -8,6 +8,7 @@ import {
   NodeType,
   PrefixExpression,
   Program,
+  ReturnStatement,
   Statement,
 } from '../ast';
 import {
@@ -16,6 +17,8 @@ import {
   IntegerObject,
   NullObject,
   Object,
+  ReturnValueObject,
+  ErrorObject,
 } from '../object';
 import { TokenType } from '../token';
 
@@ -24,23 +27,38 @@ const FALSE = new BooleanObject(false);
 const NULL = new NullObject();
 
 class Eval {
-  evaluate(node: NodeType): Object {
+  evaluate(program: Program): Object[] {
+    const results = program.statements.map((stmt) => this.evaluateNode(stmt));
+    const returnObject = results.find(
+      (result) => result instanceof ReturnValueObject
+    );
+    const errorObject = results.find((result) => result instanceof ErrorObject);
+
+    return returnObject
+      ? [returnObject]
+      : errorObject
+      ? [errorObject]
+      : results;
+  }
+
+  evaluateNode(node: NodeType): Object {
     switch (true) {
-      case node instanceof Program:
-        return this.evalStatements((node as Program).statements);
       case node instanceof ExpressionStatement:
-        return this.evaluate((node as ExpressionStatement).expression);
+        return this.evaluateNode((node as ExpressionStatement).expression);
       case node instanceof IntegerLiteral:
         return new IntegerObject(+node.tokenLiteral());
       case node instanceof BooleanLiteral:
         return this.booleanToBooleanObject(node.tokenLiteral() === 'true');
       case node instanceof InfixExpression:
         const infix = node as InfixExpression;
-        const l = this.evaluate(infix.left);
-        const r = this.evaluate(infix.right);
+        const l = this.evaluateNode(infix.left);
+        if (this.isError(l)) return l;
+        const r = this.evaluateNode(infix.right);
+        if (this.isError(r)) return r;
         return this.evalInfixExpression(infix.operator, l, r);
       case node instanceof PrefixExpression:
-        const right = this.evaluate((node as PrefixExpression).right);
+        const right = this.evaluateNode((node as PrefixExpression).right);
+        if (this.isError(right)) return right;
         return this.evalPrefixExpression(
           (node as PrefixExpression).operator,
           right
@@ -49,14 +67,38 @@ class Eval {
         return this.evalStatements((node as BlockStatement).statements);
       case node instanceof IfExpression:
         return this.evalIfExpression(node as IfExpression);
+      case node instanceof ReturnStatement:
+        const val = this.evaluateNode((node as ReturnStatement).returnValue);
+        if (this.isError(val)) return val;
+        return new ReturnValueObject(val);
       default:
         return NULL;
     }
   }
 
   evalStatements(stmts: Statement[]): Object {
-    // to do: return all stmts
-    return stmts.map((stmt) => this.evaluate(stmt))[0];
+    const results = stmts.map((stmt) => this.evaluateNode(stmt));
+
+    //debug
+    console.log(results);
+
+    return (
+      results.find((result) => result instanceof ReturnValueObject) ??
+      results.filter((result) => result instanceof ErrorObject)[0] ??
+      results.filter((result) => !(result instanceof NullObject))[0] ??
+      NULL
+    );
+  }
+
+  newError(msg: string): ErrorObject {
+    return new ErrorObject(msg);
+  }
+
+  isError(obj: Object): boolean {
+    if (obj !== null) {
+      return obj.type() === ObjectType.ERROR_OBJ;
+    }
+    return false;
   }
 
   isTruthy(object: Object): boolean {
@@ -73,12 +115,14 @@ class Eval {
   }
 
   evalIfExpression(expression: IfExpression): Object {
-    const condition = this.evaluate(expression.condition);
+    const condition = this.evaluateNode(expression.condition);
+
+    if (this.isError(condition)) return condition;
 
     if (this.isTruthy(condition)) {
-      return this.evaluate(expression.consequence);
+      return this.evaluateNode(expression.consequence);
     } else if (expression.alternative) {
-      return this.evaluate(expression.alternative);
+      return this.evaluateNode(expression.alternative);
     } else {
       return NULL;
     }
@@ -114,7 +158,9 @@ class Eval {
       case TokenType.NOT_EQ:
         return this.booleanToBooleanObject(leftVal !== rightVal);
       default:
-        return NULL;
+        return this.newError(
+          `unknown operator: ${left.type()} ${operator} ${right.type()}`
+        );
     }
   }
 
@@ -127,8 +173,14 @@ class Eval {
         return this.booleanToBooleanObject(left === right);
       case operator == TokenType.NOT_EQ:
         return this.booleanToBooleanObject(left !== right);
+      case left.type() !== right.type():
+        return this.newError(
+          `type mismatch: ${left.type()} ${operator} ${right.type()}`
+        );
       default:
-        return null;
+        return this.newError(
+          `unknown operator: ${left.type()} ${operator} ${right.type()}`
+        );
     }
   }
 
@@ -147,7 +199,7 @@ class Eval {
 
   minusPrefixOperatorExpression(right: Object): Object {
     if (right.type() !== ObjectType.INTEGER_OBJ) {
-      return NULL;
+      return this.newError(`unknown operator: -${right.type()}`);
     }
     const value = (right as IntegerObject).value;
     return new IntegerObject(-value);
@@ -160,7 +212,7 @@ class Eval {
       case TokenType.MINUS:
         return this.minusPrefixOperatorExpression(right);
       default:
-        return null;
+        return this.newError(`unknown operator: ${operator} ${right.type()}`);
     }
   }
 }

@@ -19,7 +19,7 @@ export default class Repl {
     }
 
     const evaluated = this._eval.evaluate(program);
-    console.log(evaluated.inspect());
+    evaluated.map((item) => console.log(item.inspect()));
   }
 
   private processInput(input: string) {

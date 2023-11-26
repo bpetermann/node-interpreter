@@ -1,7 +1,11 @@
+import colors from 'colors';
+
 enum ObjectType {
   INTEGER_OBJ = 'INTEGER',
   BOOLEAN_OBJ = 'BOOLEAN',
   NULL_OBJ = 'NULL',
+  RETURN_VALUE_OBJ = 'RETURN_VALUE',
+  ERROR_OBJ = 'ERROR',
 }
 
 interface Object {
@@ -43,4 +47,36 @@ class NullObject implements Object {
   }
 }
 
-export { Object, ObjectType, IntegerObject, BooleanObject, NullObject };
+class ReturnValueObject implements Object {
+  constructor(public value: Object) {}
+
+  type(): ObjectType {
+    return ObjectType.RETURN_VALUE_OBJ;
+  }
+
+  inspect(): string {
+    return this.value.inspect();
+  }
+}
+
+class ErrorObject implements Object {
+  constructor(public message: string) {}
+
+  type(): ObjectType {
+    return ObjectType.ERROR_OBJ;
+  }
+
+  inspect(): string {
+    return colors.red(this.message);
+  }
+}
+
+export {
+  Object,
+  ObjectType,
+  IntegerObject,
+  BooleanObject,
+  NullObject,
+  ReturnValueObject,
+  ErrorObject,
+};
