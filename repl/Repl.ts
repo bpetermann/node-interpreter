@@ -4,12 +4,10 @@ import { Parser } from '../parser';
 import readline from 'readline';
 import { Eval } from '../eval';
 export default class Repl {
-  env: Environment;
   private _eval: Eval;
 
   constructor() {
-    this.env = new Environment({});
-    this._eval = new Eval(this.env);
+    this._eval = new Eval();
   }
 
   private print(line: string) {

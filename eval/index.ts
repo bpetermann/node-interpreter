@@ -32,8 +32,8 @@ const NULL = new NullObject();
 class Eval {
   private _env: Environment;
 
-  constructor(env: Environment) {
-    this._env = env;
+  constructor() {
+    this._env = new Environment({});
   }
 
   evaluate(program: Program): Object[] {
