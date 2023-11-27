@@ -1,3 +1,5 @@
+import { Environment, EnclosedEnvironment } from './Environment';
+import { Statement, Identifier } from 'ast';
 import colors from 'colors';
 
 enum ObjectType {
@@ -6,8 +8,10 @@ enum ObjectType {
   NULL_OBJ = 'NULL',
   RETURN_VALUE_OBJ = 'RETURN_VALUE',
   ERROR_OBJ = 'ERROR',
+  FUNCTION_OBJ = 'FUNCTION',
 }
 
+type EnvType = EnclosedEnvironment | Environment;
 interface Object {
   type: () => ObjectType;
   inspect: () => string;
@@ -71,6 +75,28 @@ class ErrorObject implements Object {
   }
 }
 
+class FunctionObject implements Object {
+  parameters: Identifier[];
+  body: Statement;
+  env: EnvType;
+
+  constructor(parameters: Identifier[], env: EnvType, body: Statement) {
+    this.parameters = parameters;
+    this.env = env;
+    this.body = body;
+  }
+
+  type(): ObjectType {
+    return ObjectType.FUNCTION_OBJ;
+  }
+
+  inspect(): string {
+    return `fn(${this.parameters
+      .map((param) => param.getString())
+      .join(', ')}){${this.body.getString()}}`;
+  }
+}
+
 export {
   Object,
   ObjectType,
@@ -79,4 +105,5 @@ export {
   NullObject,
   ReturnValueObject,
   ErrorObject,
+  FunctionObject,
 };

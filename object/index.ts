@@ -6,5 +6,6 @@ export {
   NullObject,
   ReturnValueObject,
   ErrorObject,
+  FunctionObject,
 } from './object';
-export { Environment } from './Environment';
+export { Environment, EnclosedEnvironment } from './Environment';

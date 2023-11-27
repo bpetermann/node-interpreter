@@ -5,8 +5,10 @@ import readline from 'readline';
 import { Eval } from '../eval';
 export default class Repl {
   private _eval: Eval;
+  env: Environment;
 
   constructor() {
+    this.env = new Environment({});
     this._eval = new Eval();
   }
 
@@ -19,8 +21,10 @@ export default class Repl {
       return;
     }
 
-    const evaluated = this._eval.evaluate(program);
-    evaluated.map((item) => console.log(item.inspect()));
+    const evaluated = this._eval.evaluate(program, this.env);
+    evaluated.map((item) => {
+      console.log(item ? item.inspect() : 'undefined');
+    });
   }
 
   private processInput(input: string) {
