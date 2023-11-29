@@ -1,7 +1,7 @@
 import { Object } from './index';
 
 class Environment {
-  _store: { [k: string]: Object };
+  private _store: { [k: string]: Object };
 
   constructor(store: { [k: string]: Object }) {
     this._store = store;
@@ -20,8 +20,8 @@ class Environment {
 }
 
 class EnclosedEnvironment {
-  _store: { [k: string]: Object };
-  _outer: Environment;
+  private _store: { [k: string]: Object };
+  private _outer: Environment;
 
   constructor(outer: Environment) {
     this._store = {};
