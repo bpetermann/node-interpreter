@@ -1,6 +1,6 @@
 # Node interpreter
 
-This Node/Typescript interpreter is designed for the Monkey programming language, drawing inspiration from the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
+A Node/Typescript implementation of an interpreter, drawing inspiration from the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
 
 ## Installation
 
@@ -41,12 +41,12 @@ Operators
 
 Keywords
 
+- if
 - fn
 - let
+- else
 - true
 - false
-- if
-- else
 - return
 
 ## Interpreter Workflow
@@ -55,7 +55,7 @@ Keywords
 
 - The input code undergoes tokenization by the Lexer, breaking it into smaller units known as tokens (keywords, identifiers, operators).
 
-3. Parsing:
+2. Parsing:
 
 - Tokens are organized into an abstract syntax tree (AST) by the Parser, following the grammar rules specific to the language.
 - The AST represents the hierarchical structure of the code, arranging statements and expressions.
