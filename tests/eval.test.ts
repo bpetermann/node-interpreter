@@ -1,72 +1,84 @@
-import { BooleanObject, ErrorObject, IntegerObject } from '../object';
-import { Environment } from '../object';
+import {
+  BooleanObject,
+  ErrorObject,
+  IntegerObject,
+  ReturnValueObject,
+} from '../object';
+import { parseAndEval, cleanInspect } from './helper';
 import { expect } from '@jest/globals';
-import { Parser } from '../parser';
-import { Program } from '../ast';
-import { Eval } from '../eval';
 
-it('should parse input to statements', () => {
-  const parser = new Parser(`5`);
-  const program: Program = parser.parse();
-
-  const obj = new Eval().evaluate(program, new Environment({}))[0];
-
-  if (!(obj instanceof IntegerObject)) {
-    throw new Error('Object is not an integer');
-  }
-
+it('should evaluate integer literal', () => {
+  const actual = parseAndEval(`5`);
   const expected = 5;
 
-  expect(obj.value).toEqual(expected);
+  expect(actual).toBeInstanceOf(IntegerObject);
+  expect((actual as IntegerObject).value).toEqual(expected);
 });
 
-it('should parse bang prefix expressions', () => {
-  const parser = new Parser(`!true;`);
-  const program: Program = parser.parse();
+it('should evaluate prefix expressions', () => {
+  const actual = parseAndEval(`!true;`);
+  const expected = false;
 
-  const obj = new Eval().evaluate(program, new Environment({}))[0];
-
-  expect(obj.inspect()).toEqual('false');
+  expect(actual).toBeInstanceOf(BooleanObject);
+  expect((actual as BooleanObject).value).toEqual(expected);
 });
 
-it('should parse infix expressions', () => {
-  const parser = new Parser(`(5 + 10 * 2 + 15 / 3) * 2 + -10;`);
+it('should evaluate boolean literals', () => {
+  const actual = parseAndEval(`(10 + 2) * 30 == 300 + 20 * 3;`);
+  const expected = true;
+
+  expect(actual).toBeInstanceOf(BooleanObject);
+  expect((actual as BooleanObject).value).toEqual(expected);
+});
+
+it('should evaluate infix expressions', () => {
+  const actual = parseAndEval(`(5 + 10 * 2 + 15 / 3) * 2 + -10;`);
   const expected = 50;
 
-  const program: Program = parser.parse();
-  const obj = new Eval().evaluate(program, new Environment({}))[0];
-
-  if (!(obj instanceof IntegerObject)) {
-    throw new Error('Object is not an integer');
-  }
-
-  expect(obj.value).toEqual(expected);
+  expect(actual).toBeInstanceOf(IntegerObject);
+  expect((actual as IntegerObject).value).toEqual(expected);
 });
 
-it('should parse boolean expressions', () => {
-  const parser = new Parser(`(10 + 2) * 30 == 300 + 20 * 3;`);
-  const expected = true;
+it('should evaluate conditionals', () => {
+  const actual = parseAndEval(`if (1 < 2) { 10 } else { 20 };`);
+  const expected = 10;
 
-  const program: Program = parser.parse();
-  const obj = new Eval().evaluate(program, new Environment({}))[0];
-
-  if (!(obj instanceof BooleanObject)) {
-    throw new Error('Object is not an boolean');
-  }
-
-  expect(obj.value).toEqual(expected);
+  expect(actual).toBeInstanceOf(IntegerObject);
+  expect((actual as IntegerObject).value).toEqual(expected);
 });
 
-it('should return error objects', () => {
-  const parser = new Parser(`if (10 > 1) { true + false; };`);
-  const expected = true;
+it('should evaluate errors', () => {
+  const actual = parseAndEval(`if (10 > 1) { true + false; };`);
+  const expected = 'unknown operator: BOOLEAN + BOOLEAN';
 
-  const program: Program = parser.parse();
-  const obj = new Eval().evaluate(program, new Environment({}))[0];
+  expect(actual).toBeInstanceOf(ErrorObject);
+  expect(cleanInspect(actual)).toEqual(expected);
+});
 
-  if (!(obj instanceof ErrorObject)) {
-    throw new Error('Object is not an error');
+it('should evaluate return statements', () => {
+  const actual = parseAndEval(`
+  if (10 > 1) {
+    if (10 > 1) {
+      return 10;
+    }
+    return 1;
   }
-  const cleanInspect = obj.inspect().replace(/\x1B\[[0-9;]*m/g, '');
-  expect(cleanInspect).toEqual('unknown operator: BOOLEAN + BOOLEAN');
+  `);
+  const expected = '10';
+
+  expect(actual).toBeInstanceOf(ReturnValueObject);
+  expect(cleanInspect(actual)).toEqual(expected);
+});
+
+it('should evaluate functions', () => {
+  const actual = parseAndEval(
+    `
+  let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));
+  `,
+    1
+  );
+  const expected = '20';
+
+  expect(actual).toBeInstanceOf(IntegerObject);
+  expect(cleanInspect(actual)).toEqual(expected);
 });

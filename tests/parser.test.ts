@@ -4,24 +4,23 @@ import {
   InfixExpression,
   BooleanLiteral,
 } from '../ast';
+import { parse, cleanStmt } from './helper';
 import { expect } from '@jest/globals';
 import { Parser } from '../parser';
 
 it('should parse input to statements', () => {
-  const parser = new Parser(`
-    let x = 5;
-    let y = 10;
-    let foobar = 838383;
-    `);
-  const actual = parser.parse();
+  const actual = parse(`
+  let x = 5;
+  let y = 10;
+  let foobar = 838383;
+  `);
+  const expected = ['x', 'y', 'foobar'];
 
   const stmt = actual.statements.map((stmt) => {
     if (stmt instanceof LetStatement) {
       return stmt.name.tokenLiteral();
     }
   });
-
-  const expected = ['x', 'y', 'foobar'];
 
   expect(stmt).toEqual(expected);
 });
@@ -38,114 +37,99 @@ it('should add an error message', () => {
 });
 
 it('should parse all statements', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   return 5;
   return 10;
   return 993322;
   `);
-  const actual = parser.parse();
 
-  const stmt = actual.statements.length;
+  const expected = 3;
 
-  expect(stmt).toEqual(3);
+  expect(actual.statements.length).toEqual(expected);
 });
 
 it('should parse string expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   foo;
   `);
-  const actual = parser.parse();
+  const expected = 'foo';
 
-  const stmt = actual.statements[0].tokenLiteral();
-
-  expect(stmt).toEqual('foo');
+  expect(actual.statements[0].tokenLiteral()).toEqual(expected);
 });
 
 it('should parse number expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   5;
   `);
-  const actual = parser.parse();
+  const expected = '5';
 
-  const stmt = actual.statements[0].tokenLiteral();
-
-  expect(stmt).toEqual('5');
+  expect(actual.statements[0].tokenLiteral()).toEqual(expected);
 });
 
 it('should parse prefix expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   !5;
   `);
-  const actual = parser.parse();
+  const expected = '!';
 
-  const stmt = actual.statements[0].tokenLiteral();
-
-  expect(stmt).toEqual('!');
+  expect(actual.statements[0].tokenLiteral()).toEqual(expected);
 });
 
 it('should parse infix expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   5 + 3;
   `);
-  const actual = parser.parse();
 
   const stmt = actual.statements[0];
 
-  expect(stmt).toBeInstanceOf(ExpressionStatement);
-  if (
-    stmt instanceof ExpressionStatement &&
-    stmt.expression instanceof InfixExpression
-  ) {
-    expect(stmt.expression.left.tokenLiteral()).toEqual('5');
-    expect(stmt.expression.operator).toEqual('+');
-    expect(stmt.expression.right.tokenLiteral()).toEqual('3');
-  }
+  expect(actual.statements[0]).toBeInstanceOf(ExpressionStatement);
+  expect(
+    (actual.statements[0] as ExpressionStatement).expression
+  ).toBeInstanceOf(InfixExpression);
+
+  const { left, operator, right } = (
+    actual.statements[0] as ExpressionStatement
+  ).expression as InfixExpression;
+  expect(left.tokenLiteral()).toEqual('5');
+  expect(operator).toEqual('+');
+  expect(right.tokenLiteral()).toEqual('3');
 });
 
 it('should parse boolean literals', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   true;
   `);
-  const actual = parser.parse();
-
+  const expected = true;
   const stmt = actual.statements[0] as ExpressionStatement;
 
-  expect(stmt).toBeInstanceOf(ExpressionStatement);
-  expect((stmt.expression as BooleanLiteral).value).toEqual(true);
+  expect(actual.statements[0]).toBeInstanceOf(ExpressionStatement);
+  expect((stmt.expression as BooleanLiteral).value).toEqual(expected);
 });
 
 it('should parse grouped expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   1 + (2 + 3) + 4;
   `);
-  const actual = parser.parse();
 
-  const stmt = actual.getString();
+  const expected = '((1 + (2 + 3)) + 4)';
 
-  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
-  expect(cleanStmt.trim()).toBe('((1 + (2 + 3)) + 4)');
+  expect(cleanStmt(actual.getString())).toBe(expected);
 });
 
 it('should parse if expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   if (x > y) { x } else { y };
   `);
-  const actual = parser.parse();
+  const expected = 'if (x > y) x else y';
 
-  const stmt = actual.getString();
-
-  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
-  expect(cleanStmt.trim()).toBe('if (x > y) x else y');
+  expect(cleanStmt(actual.getString())).toBe(expected);
 });
 
 it('should parse if expressions', () => {
-  const parser = new Parser(`
+  const actual = parse(`
   fn(x, y) { x + y; }
   `);
-  const actual = parser.parse();
+  const expected = 'fn(x, y) {(x + y)}';
 
-  const stmt = actual.getString();
-
-  const cleanStmt = stmt.replace(/\x1B\[[0-9;]*m/g, '');
-  expect(cleanStmt.trim()).toBe('fn(x, y) {(x + y)}');
+  expect(cleanStmt(actual.getString())).toBe(expected);
 });
