@@ -27,14 +27,13 @@ import {
   Environment,
   FunctionObject,
   EnclosedEnvironment,
+  Env,
 } from '../object';
 import { TokenType } from '../token';
 
 const TRUE = new BooleanObject(true);
 const FALSE = new BooleanObject(false);
 const NULL = new NullObject();
-
-type EnvType = EnclosedEnvironment | Environment;
 
 class Eval {
   evaluate(program: Program, env: Environment): Object[] {
@@ -53,7 +52,7 @@ class Eval {
       : results;
   }
 
-  evaluateNode(node: NodeType, env: EnvType): Object {
+  evaluateNode(node: NodeType, env: Env): Object {
     switch (true) {
       case node instanceof ExpressionStatement:
         return this.evaluateNode((node as ExpressionStatement).expression, env);
@@ -62,62 +61,55 @@ class Eval {
       case node instanceof BooleanLiteral:
         return this.booleanToBooleanObject(node.tokenLiteral() === 'true');
       case node instanceof InfixExpression:
-        const infix = node as InfixExpression;
-        const l = this.evaluateNode(infix.left, env);
+        const {
+          left: infixLeft,
+          right: infixRight,
+          operator: infixOperator,
+        } = node as InfixExpression;
+        const l = this.evaluateNode(infixLeft, env);
         if (this.isError(l)) return l;
-        const r = this.evaluateNode(infix.right, env);
+        const r = this.evaluateNode(infixRight, env);
         if (this.isError(r)) return r;
-        return this.evalInfixExpression(infix.operator, l, r);
+        return this.evalInfixExpression(infixOperator, l, r);
       case node instanceof PrefixExpression:
-        const right = this.evaluateNode((node as PrefixExpression).right, env);
+        const { right: prefixRight, operator: prefixOperator } =
+          node as PrefixExpression;
+        const right = this.evaluateNode(prefixRight, env);
         if (this.isError(right)) return right;
-        return this.evalPrefixExpression(
-          (node as PrefixExpression).operator,
-          right
-        );
+        return this.evalPrefixExpression(prefixOperator, right);
       case node instanceof BlockStatement:
         return this.evalStatements((node as BlockStatement).statements, env);
       case node instanceof IfExpression:
         return this.evalIfExpression(node as IfExpression, env);
       case node instanceof ReturnStatement:
-        const val = this.evaluateNode(
-          (node as ReturnStatement).returnValue,
-          env
-        );
+        const { returnValue } = node as ReturnStatement;
+        const val = this.evaluateNode(returnValue, env);
         if (this.isError(val)) return val;
         return new ReturnValueObject(val);
       case node instanceof Identifier:
         return this.evalIdentifier(node as Identifier, env);
       case node instanceof LetStatement:
-        const letStmt = node as LetStatement;
-        const letValue = this.evaluateNode(letStmt.value, env);
-        if (this.isError(letValue)) {
-          return letValue;
-        }
-        env.set(letStmt.name.value, letValue);
+        const { name, value } = node as LetStatement;
+        const letValue = this.evaluateNode(value, env);
+        if (this.isError(letValue)) return letValue;
+        env.set(name.value, letValue);
         break;
       case node instanceof FunctionLiteral:
         const { parameters, body } = node as FunctionLiteral;
         return new FunctionObject(parameters, env, body);
       case node instanceof CallExpression:
-        const func = this.evaluateNode((node as CallExpression).function, env);
-        if (this.isError(func)) {
-          return func;
-        }
-        const args = this.evalExpressions(
-          (node as CallExpression).arguments,
-          env
-        );
-        if (args.length === 1 && this.isError(args[0])) {
-          return args[0];
-        }
+        const { function: fn, arguments: callArgs } = node as CallExpression;
+        const func = this.evaluateNode(fn, env);
+        if (this.isError(func)) return func;
+        const args = this.evalExpressions(callArgs, env);
+        if (args.length === 1 && this.isError(args[0])) return args[0];
         return this.applyFunction(func, args);
       default:
         return NULL;
     }
   }
 
-  evalStatements(stmts: Statement[], env: EnvType): Object {
+  evalStatements(stmts: Statement[], env: Env): Object {
     const results = stmts.map((stmt) => this.evaluateNode(stmt, env));
 
     return (
@@ -165,14 +157,14 @@ class Eval {
     return obj;
   }
 
-  evalExpressions(exps: Expression[], env: EnvType): Object[] {
+  evalExpressions(exps: Expression[], env: Env): Object[] {
     const result = exps.map((exp) => this.evaluateNode(exp, env));
     const errorObject = result.find((result) => result instanceof ErrorObject);
 
     return errorObject ? [errorObject] : result;
   }
 
-  evalIdentifier(node: Identifier, env: EnvType): Object {
+  evalIdentifier(node: Identifier, env: Env): Object {
     const value = env.get(node.value);
 
     if (!value) {
@@ -195,7 +187,7 @@ class Eval {
     }
   }
 
-  evalIfExpression(expression: IfExpression, env: EnvType): Object {
+  evalIfExpression(expression: IfExpression, env: Env): Object {
     const condition = this.evaluateNode(expression.condition, env);
 
     if (this.isError(condition)) return condition;

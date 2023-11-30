@@ -3,6 +3,7 @@ import { TokenType } from '../token';
 import { Parser } from '../parser';
 import readline from 'readline';
 import { Eval } from '../eval';
+import colors from 'colors';
 export default class Repl {
   private _eval: Eval;
   env: Environment;
@@ -23,7 +24,7 @@ export default class Repl {
 
     const evaluated = this._eval.evaluate(program, this.env);
     evaluated.map((item) => {
-      console.log(item ? item.inspect() : 'undefined');
+      console.log(item ? item.inspect() : colors.gray('undefined'));
     });
   }
 

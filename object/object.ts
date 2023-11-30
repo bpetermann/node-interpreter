@@ -1,5 +1,5 @@
-import { Environment, EnclosedEnvironment } from './Environment';
 import { Statement, Identifier } from 'ast';
+import { Env } from './Environment';
 import colors from 'colors';
 
 enum ObjectType {
@@ -11,7 +11,6 @@ enum ObjectType {
   FUNCTION_OBJ = 'FUNCTION',
 }
 
-type EnvType = EnclosedEnvironment | Environment;
 interface Object {
   type: () => ObjectType;
   inspect: () => string;
@@ -78,9 +77,9 @@ class ErrorObject implements Object {
 class FunctionObject implements Object {
   parameters: Identifier[];
   body: Statement;
-  env: EnvType;
+  env: Env;
 
-  constructor(parameters: Identifier[], env: EnvType, body: Statement) {
+  constructor(parameters: Identifier[], env: Env, body: Statement) {
     this.parameters = parameters;
     this.env = env;
     this.body = body;

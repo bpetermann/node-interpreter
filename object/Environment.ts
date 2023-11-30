@@ -1,6 +1,11 @@
 import { Object } from './index';
 
-class Environment {
+interface Env {
+  get: (name: string) => Object;
+  set: (name: string, val: Object) => Object;
+}
+
+class Environment implements Env {
   private _store: { [k: string]: Object };
 
   constructor(store: { [k: string]: Object }) {
@@ -19,7 +24,7 @@ class Environment {
   }
 }
 
-class EnclosedEnvironment {
+class EnclosedEnvironment implements Env {
   private _store: { [k: string]: Object };
   private _outer: Environment;
 
@@ -44,4 +49,4 @@ class EnclosedEnvironment {
   }
 }
 
-export { Environment, EnclosedEnvironment };
+export { Env, Environment, EnclosedEnvironment };

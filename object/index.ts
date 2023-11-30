@@ -8,4 +8,4 @@ export {
   ErrorObject,
   FunctionObject,
 } from './object';
-export { Environment, EnclosedEnvironment } from './Environment';
+export { Env, Environment, EnclosedEnvironment } from './Environment';
