@@ -24,7 +24,7 @@ class IntegerObject implements Object {
   }
 
   inspect(): string {
-    return `${this.value}`;
+    return colors.green(`${this.value}`);
   }
 }
 
@@ -36,7 +36,7 @@ class BooleanObject implements Object {
   }
 
   inspect(): string {
-    return `${this.value}`;
+    return colors.blue(`${this.value}`);
   }
 }
 
@@ -46,7 +46,7 @@ class NullObject implements Object {
   }
 
   inspect(): string {
-    return `null`;
+    return colors.gray(`null`);
   }
 }
 
@@ -90,9 +90,13 @@ class FunctionObject implements Object {
   }
 
   inspect(): string {
-    return `fn(${this.parameters
-      .map((param) => param.getString())
-      .join(', ')}){${this.body.getString()}}`;
+    return (
+      colors.magenta('fn(') +
+      `${this.parameters.map((param) => param.getString()).join(', ')}` +
+      colors.magenta('){') +
+      `${this.body.getString()}` +
+      colors.magenta('}')
+    );
   }
 }
 

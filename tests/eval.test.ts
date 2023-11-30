@@ -72,13 +72,22 @@ it('should evaluate return statements', () => {
 
 it('should evaluate functions', () => {
   const actual = parseAndEval(
-    `
-  let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));
-  `,
+    `let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));`,
     1
   );
-  const expected = '20';
+  const expected = 20;
 
   expect(actual).toBeInstanceOf(IntegerObject);
-  expect(cleanInspect(actual)).toEqual(expected);
+  expect((actual as IntegerObject).value).toEqual(expected);
+});
+
+it('should evaluate recursive functions', () => {
+  const actual = parseAndEval(
+    `let factorial = fn(n) { if (n == 0) { 1 } else { n * factorial(n - 1) } }; factorial(10);`,
+    1
+  );
+  const expected = 3628800;
+
+  expect(actual).toBeInstanceOf(IntegerObject);
+  expect((actual as IntegerObject).value).toEqual(expected);
 });
