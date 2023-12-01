@@ -91,7 +91,7 @@ Example of closures:
 Close the REPL:
 
 ```js
-eof;
+eof
 ```
 
 ## Tests

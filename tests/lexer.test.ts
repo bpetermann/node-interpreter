@@ -83,6 +83,9 @@ it('should convert source code', () => {
 
   10 == 10;
   10 != 9;
+  "foo bar";
+  "hello, world";
+  [1, 2];
   `);
 
   const actual = lexer.tokens;
@@ -161,20 +164,15 @@ it('should convert source code', () => {
     { type: TokenType.NOT_EQ, literal: '!=' },
     { type: TokenType.INT, literal: '9' },
     { type: TokenType.SEMICOLON, literal: ';' },
-    { type: TokenType.EOF, literal: '' },
-  ];
-
-  expect(actual).toEqual(expected);
-});
-
-it('should convert strings', () => {
-  const lexer = new Lexer(`"foo bar";"hello, world";`);
-  const actual = lexer.tokens;
-
-  const expected = [
     { type: TokenType.STRING, literal: 'foo bar' },
     { type: TokenType.SEMICOLON, literal: ';' },
     { type: TokenType.STRING, literal: 'hello, world' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.LBRACKET, literal: '[' },
+    { type: TokenType.INT, literal: '1' },
+    { type: TokenType.COMMA, literal: ',' },
+    { type: TokenType.INT, literal: '2' },
+    { type: TokenType.RBRACKET, literal: ']' },
     { type: TokenType.SEMICOLON, literal: ';' },
     { type: TokenType.EOF, literal: '' },
   ];

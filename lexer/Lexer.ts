@@ -116,6 +116,8 @@ export default class Lexer {
       case TokenType.MINUS:
       case TokenType.SLASH:
       case TokenType.ASTERISK:
+      case TokenType.LBRACKET:
+      case TokenType.RBRACKET:
       case TokenType.LT:
       case TokenType.GT:
         this._tokens.push({

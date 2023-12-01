@@ -10,6 +10,8 @@ enum TokenType {
   SEMICOLON = ';',
   LPAREN = '(',
   RPAREN = ')',
+  LBRACKET = '[',
+  RBRACKET = ']',
   LBRACE = '{',
   RBRACE = '}',
   // Keywords
