@@ -166,3 +166,18 @@ it('should convert source code', () => {
 
   expect(actual).toEqual(expected);
 });
+
+it('should convert strings', () => {
+  const lexer = new Lexer(`"foo bar";"hello, world";`);
+  const actual = lexer.tokens;
+
+  const expected = [
+    { type: TokenType.STRING, literal: 'foo bar' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.STRING, literal: 'hello, world' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.EOF, literal: '' },
+  ];
+
+  expect(actual).toEqual(expected);
+});

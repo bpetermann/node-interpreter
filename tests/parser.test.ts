@@ -3,6 +3,7 @@ import {
   ExpressionStatement,
   InfixExpression,
   BooleanLiteral,
+  StringLiteral,
 } from '../ast';
 import { parse, cleanStmt } from './helper';
 import { expect } from '@jest/globals';
@@ -132,4 +133,14 @@ it('should parse if expressions', () => {
   const expected = 'fn(x, y) {(x + y)}';
 
   expect(cleanStmt(actual.getString())).toBe(expected);
+});
+
+it('should parse strings', () => {
+  const actual = parse(`"hello, world";`);
+  const expected = 'hello, world';
+  const stmt = actual.statements[0] as ExpressionStatement;
+
+  expect(stmt).toBeInstanceOf(ExpressionStatement);
+  expect(stmt.expression).toBeInstanceOf(StringLiteral);
+  expect((stmt.expression as StringLiteral).value).toEqual(expected);
 });

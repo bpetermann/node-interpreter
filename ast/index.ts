@@ -7,7 +7,8 @@ export {
   BooleanLiteral,
   IfExpression,
   FunctionLiteral,
-  CallExpression
+  CallExpression,
+  StringLiteral,
 } from './expression';
 export {
   LetStatement,

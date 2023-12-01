@@ -2,21 +2,21 @@ import { WhiteSpace, TokenType, Token, lookUpToken } from '../token';
 
 export default class Lexer {
   private _tokens: Token[];
-  private _position: number;
-  private _readPosition: number;
-  private _char: string | null;
+  private position: number;
+  private readPosition: number;
+  private char: string | null;
 
   constructor(public readonly input: string) {
-    this._position = 0;
-    this._readPosition = 0;
-    this._char = null;
     this._tokens = [];
+    this.position = 0;
+    this.readPosition = 0;
+    this.char = null;
     this.start();
   }
 
   public start(): void {
     this.readChar();
-    while (this._readPosition <= this.input.length) {
+    while (this.readPosition <= this.input.length) {
       this.nextToken();
     }
     this._tokens.push({ type: TokenType.EOF, literal: '' });
@@ -35,45 +35,72 @@ export default class Lexer {
   }
 
   private readIdentifier(): Token {
-    let pos = this._position;
+    let pos = this.position;
     while (this.isLetter(this.input[pos])) {
       pos += 1;
     }
-    this._readPosition = pos;
+    this.readPosition = pos;
     return {
-      type: lookUpToken(this.input.slice(this._position, pos)),
-      literal: this.input.slice(this._position, pos),
+      type: lookUpToken(this.input.slice(this.position, pos)),
+      literal: this.input.slice(this.position, pos),
     };
   }
 
   private readDigit(): Token {
-    let pos = this._position;
+    let pos = this.position;
     while (this.isDigit(this.input[pos])) {
       pos += 1;
     }
-    this._readPosition = pos;
+    this.readPosition = pos;
     return {
       type: TokenType.INT,
-      literal: this.input.slice(this._position, pos),
+      literal: this.input.slice(this.position, pos),
     };
   }
 
+  private readEqual(): void {
+    const peekedEqualSign = this.peekChar() === '=';
+
+    this._tokens.push({
+      type: peekedEqualSign
+        ? this.char === '='
+          ? TokenType.EQ
+          : TokenType.NOT_EQ
+        : (this.char as TokenType),
+      literal: peekedEqualSign ? `${this.char}=` : this.char,
+    });
+
+    if (peekedEqualSign) this.readChar();
+  }
+
+  private readString(): string {
+    let pos = this.readPosition;
+
+    while (this.input[pos] !== TokenType.STRING && pos < this.input.length) {
+      pos += 1;
+    }
+    // pos += 1;
+    this.readPosition = pos + 1;
+
+    return this.input.slice(this.position + 1, pos);
+  }
+
   private peekChar(): string {
-    if (this._readPosition >= this.input.length) {
+    if (this.readPosition >= this.input.length) {
       return '';
     } else {
-      return this.input[this._readPosition];
+      return this.input[this.readPosition];
     }
   }
 
   private readChar(): void {
-    this._char = this.input[this._readPosition];
-    this._position = this._readPosition;
-    this._readPosition += 1;
+    this.char = this.input[this.readPosition];
+    this.position = this.readPosition;
+    this.readPosition += 1;
   }
 
   private nextToken(): void {
-    switch (this._char) {
+    switch (this.char) {
       case WhiteSpace.WHITESPACE:
       case WhiteSpace.TAB:
       case WhiteSpace.NEWLINE:
@@ -92,27 +119,24 @@ export default class Lexer {
       case TokenType.LT:
       case TokenType.GT:
         this._tokens.push({
-          type: this._char as TokenType,
-          literal: this._char,
+          type: this.char as TokenType,
+          literal: this.char,
         });
         break;
       case TokenType.ASSIGN:
       case TokenType.BANG:
-        const peekedEqualSign = this.peekChar() === '=';
+        this.readEqual();
+        break;
+      case TokenType.STRING:
         this._tokens.push({
-          type: peekedEqualSign
-            ? this._char === '='
-              ? TokenType.EQ
-              : TokenType.NOT_EQ
-            : (this._char as TokenType),
-          literal: peekedEqualSign ? `${this._char}=` : this._char,
+          type: TokenType.STRING,
+          literal: this.readString(),
         });
-        if (peekedEqualSign) this.readChar();
         break;
       default:
-        if (this.isLetter(this._char)) {
+        if (this.isLetter(this.char)) {
           this._tokens.push(this.readIdentifier());
-        } else if (this.isDigit(this._char)) {
+        } else if (this.isDigit(this.char)) {
           this._tokens.push(this.readDigit());
         } else {
           this._tokens.push({

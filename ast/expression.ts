@@ -164,6 +164,24 @@ class CallExpression implements Expression {
   expressionNode: () => void;
 }
 
+class StringLiteral implements Expression {
+  value: string;
+
+  constructor(public token: Token) {
+    this.value = token.literal;
+  }
+
+  getString(): string {
+    return colors.blue(this.token.literal);
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -174,4 +192,5 @@ export {
   IfExpression,
   FunctionLiteral,
   CallExpression,
+  StringLiteral,
 };

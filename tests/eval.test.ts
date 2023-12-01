@@ -3,6 +3,7 @@ import {
   ErrorObject,
   IntegerObject,
   ReturnValueObject,
+  StringObject,
 } from '../object';
 import { parseAndEval, cleanInspect } from './helper';
 import { expect } from '@jest/globals';
@@ -90,4 +91,12 @@ it('should evaluate recursive functions', () => {
 
   expect(actual).toBeInstanceOf(IntegerObject);
   expect((actual as IntegerObject).value).toEqual(expected);
+});
+
+it('should evaluate strings', () => {
+  const actual = parseAndEval(`"hello, world";`);
+  const expected = 'hello, world';
+
+  expect(actual).toBeInstanceOf(StringObject);
+  expect((actual as StringObject).value).toEqual(expected);
 });

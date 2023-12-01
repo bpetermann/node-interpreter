@@ -15,6 +15,7 @@ import {
   Program,
   ReturnStatement,
   Statement,
+  StringLiteral,
 } from '../ast';
 import {
   Object,
@@ -28,6 +29,7 @@ import {
   FunctionObject,
   EnclosedEnvironment,
   Env,
+  StringObject,
 } from '../object';
 import { TokenType } from '../token';
 
@@ -60,6 +62,8 @@ class Eval {
         return new IntegerObject(+node.tokenLiteral());
       case node instanceof BooleanLiteral:
         return this.booleanToBooleanObject(node.tokenLiteral() === 'true');
+      case node instanceof StringLiteral:
+        return new StringObject((node as StringLiteral).value);
       case node instanceof InfixExpression:
         const {
           left: infixLeft,

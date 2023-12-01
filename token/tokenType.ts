@@ -4,6 +4,7 @@ enum TokenType {
   // Identifiers + literals
   IDENT = 'IDENT',
   INT = 'INT',
+  STRING = '"',
   // Delimiters
   COMMA = ',',
   SEMICOLON = ';',

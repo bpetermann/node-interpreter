@@ -1,4 +1,4 @@
-# Node interpreter
+# Node Interpreter
 
 A Node/Typescript implementation of an interpreter, drawing inspiration from the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
 
@@ -14,14 +14,31 @@ cd node-interpreter
 Then, install dependencies and build the project:
 
 ```js
-npm run fresh  # Installs dependencies and builds the project
+npm run fresh // Installs dependencies and builds the project
 ```
 
 Finally, start the REPL (Read-Eval-Print Loop):
 
 ```js
-npm run start  # Starts the REPL
+npm run start // Starts the REPL
 ```
+
+## Interpreter Workflow
+
+1. Lexical Analysis (Lexer):
+
+- The input code undergoes tokenization by the Lexer, breaking it into smaller units known as tokens (keywords, identifiers, operators).
+
+2. Parsing:
+
+- Tokens are organized into an abstract syntax tree (AST) by the Parser, following the grammar rules specific to the language.
+- The AST represents the hierarchical structure of the code, arranging statements and expressions.
+
+3. Evaluation:
+
+- The interpreter traverses the AST, evaluating nodes and executing code based on the languages syntax rules.
+
+This interpreter employs a process of lexical analysis, parsing, and evaluation to systematically analyze and execute code, creating an AST to interpret programs according to the specific syntax and rules of the language.
 
 ## Syntax Overview
 
@@ -49,23 +66,6 @@ Keywords
 - false
 - return
 
-## Interpreter Workflow
-
-1. Lexical Analysis (Lexer):
-
-- The input code undergoes tokenization by the Lexer, breaking it into smaller units known as tokens (keywords, identifiers, operators).
-
-2. Parsing:
-
-- Tokens are organized into an abstract syntax tree (AST) by the Parser, following the grammar rules specific to the language.
-- The AST represents the hierarchical structure of the code, arranging statements and expressions.
-
-3. Evaluation:
-
-- The interpreter traverses the AST, evaluating nodes and executing code based on the languages syntax rules.
-
-This interpreter employs a process of lexical analysis, parsing, and evaluation to systematically analyze and execute code, creating an AST to interpret programs according to the specific syntax and rules of the language.
-
 ## Usage Example
 
 Here's a basic example illustrating the declaration and invocation of a function:
@@ -91,7 +91,7 @@ Example of closures:
 Close the REPL:
 
 ```js
-eof;
+eof
 ```
 
 ## Tests

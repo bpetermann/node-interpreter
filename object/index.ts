@@ -7,5 +7,6 @@ export {
   ReturnValueObject,
   ErrorObject,
   FunctionObject,
+  StringObject
 } from './object';
 export { Env, Environment, EnclosedEnvironment } from './Environment';

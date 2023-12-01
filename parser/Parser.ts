@@ -14,6 +14,7 @@ import {
   BlockStatement,
   FunctionLiteral,
   CallExpression,
+  StringLiteral,
 } from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
@@ -48,6 +49,7 @@ export default class Parser {
       [TokenType.LPAREN]: this.parseGroupedExpression.bind(this),
       [TokenType.IF]: this.parseIfExpression.bind(this),
       [TokenType.FUNCTION]: this.parseFunction.bind(this),
+      [TokenType.STRING]: this.parseStringLiteral.bind(this),
     };
     this._infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -332,6 +334,10 @@ export default class Parser {
     expression.right = this.parseExpression(precedence);
 
     return expression;
+  }
+
+  parseStringLiteral(): StringLiteral {
+    return new StringLiteral(this._curToken);
   }
 
   parseExpression(precedence: ExpressionType): Expression | null {

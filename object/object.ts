@@ -9,6 +9,7 @@ enum ObjectType {
   RETURN_VALUE_OBJ = 'RETURN_VALUE',
   ERROR_OBJ = 'ERROR',
   FUNCTION_OBJ = 'FUNCTION',
+  STRING_OBJ = 'STRING',
 }
 
 interface Object {
@@ -100,6 +101,18 @@ class FunctionObject implements Object {
   }
 }
 
+class StringObject implements Object {
+  constructor(public value: string) {}
+
+  type(): ObjectType {
+    return ObjectType.STRING_OBJ;
+  }
+
+  inspect(): string {
+    return colors.cyan(this.value);
+  }
+} 
+
 export {
   Object,
   ObjectType,
@@ -109,4 +122,5 @@ export {
   ReturnValueObject,
   ErrorObject,
   FunctionObject,
+  StringObject
 };
