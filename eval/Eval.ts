@@ -30,7 +30,7 @@ import {
   EnclosedEnvironment,
   Env,
   StringObject,
-  BuiltinObject
+  BuiltinObject,
 } from '../object';
 import { builtins } from './builtins';
 import { TokenType } from '../token';
@@ -126,8 +126,8 @@ class Eval {
     );
   }
 
-  newError(msg: string): ErrorObject {
-    return new ErrorObject(msg);
+  newError(error: { type?: ErrorType; msg?: string }): ErrorObject {
+    return new ErrorObject(error);
   }
 
   isError(obj: Object): boolean {
@@ -148,7 +148,7 @@ class Eval {
         const builtin = fn as BuiltinObject;
         return builtin.fn(...args);
       default:
-        return this.newError(`not a function: ${fn.type()}`);
+        return this.newError({ type: 'function', msg: fn.type() });
     }
   }
 
@@ -184,7 +184,7 @@ class Eval {
       return builtins[node.value];
     }
 
-    return this.newError(`identifier not found: ${node.value}`);
+    return this.newError({ type: 'identifier', msg: node.value });
   }
 
   isTruthy(object: Object): boolean {
@@ -244,9 +244,10 @@ class Eval {
       case TokenType.NOT_EQ:
         return this.booleanToBooleanObject(leftVal !== rightVal);
       default:
-        return this.newError(
-          `unknown operator: ${left.type()} ${operator} ${right.type()}`
-        );
+        return this.newError({
+          type: 'operator',
+          msg: `${left.type()} ${operator} ${right.type()}`,
+        });
     }
   }
 
@@ -256,9 +257,10 @@ class Eval {
     right: Object
   ): Object {
     if (operator !== '+') {
-      return this.newError(
-        `unknown operator: ${left.type()} ${operator} ${right.type()}`
-      );
+      return this.newError({
+        type: 'operator',
+        msg: `${left.type()} ${operator} ${right.type()}`,
+      });
     }
     const { value: leftVal } = left as StringObject;
     const { value: rightVal } = right as StringObject;
@@ -279,13 +281,15 @@ class Eval {
         right.type() === ObjectType.STRING_OBJ:
         return this.evalStringInfixExpression(operator, left, right);
       case left.type() !== right.type():
-        return this.newError(
-          `type mismatch: ${left.type()} ${operator} ${right.type()}`
-        );
+        return this.newError({
+          type: 'mismatch',
+          msg: `${left.type()} ${operator} ${right.type()}`,
+        });
       default:
-        return this.newError(
-          `unknown operator: ${left.type()} ${operator} ${right.type()}`
-        );
+        return this.newError({
+          type: 'operator',
+          msg: `${left.type()} ${operator} ${right.type()}`,
+        });
     }
   }
 
@@ -304,7 +308,7 @@ class Eval {
 
   minusPrefixOperatorExpression(right: Object): Object {
     if (right.type() !== ObjectType.INTEGER_OBJ) {
-      return this.newError(`unknown operator: -${right.type()}`);
+      return this.newError({ type: 'operator', msg: `-${right.type()}` });
     }
     const value = (right as IntegerObject).value;
     return new IntegerObject(-value);
@@ -317,7 +321,10 @@ class Eval {
       case TokenType.MINUS:
         return this.minusPrefixOperatorExpression(right);
       default:
-        return this.newError(`unknown operator: ${operator} ${right.type()}`);
+        return this.newError({
+          type: 'operator',
+          msg: `${operator} ${right.type()}`,
+        });
     }
   }
 }

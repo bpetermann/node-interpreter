@@ -50,7 +50,36 @@ class ReturnValueObject implements Object {
 }
 
 class ErrorObject implements Object {
-  constructor(public message: string) {}
+  message: string;
+  constructor(
+    public error: {
+      type?: ErrorType;
+      msg?: string;
+      got?: string;
+    }
+  ) {
+    switch (error.type) {
+      case 'mismatch':
+        this.message = `type mismatch: ${error.msg}`;
+        break;
+      case 'operator':
+        this.message = `unknown operator: ${error.msg}`;
+        break;
+      case 'function':
+        this.message = `not a function: ${error.msg}`;
+        break;
+      case 'identifier':
+        this.message = `identifier not found: ${error.msg}`;
+        break;
+      case 'support':
+        this.message = `argument to ${error.msg} not supported, got ${error.got}`;
+        break;
+      case 'args':
+        this.message = `wrong number of arguments. got=${error.msg}, want=1`;
+      default:
+        this.message = error.msg;
+    }
+  }
 
   type(): ObjectType {
     return ObjectType.ERROR_OBJ;

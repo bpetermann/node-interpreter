@@ -1,7 +1,5 @@
 import { Token } from '../token';
 
-type ErrorType = 'expected' | 'parse' | 'debug';
-
 type ErrorProps = {
   type?: ErrorType;
   expected?: string;
