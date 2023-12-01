@@ -94,8 +94,8 @@ it('should evaluate recursive functions', () => {
 });
 
 it('should evaluate strings', () => {
-  const actual = parseAndEval(`"hello, world";`);
-  const expected = 'hello, world';
+  const actual = parseAndEval(`"Hello" + " " + "World!";`);
+  const expected = 'Hello World!';
 
   expect(actual).toBeInstanceOf(StringObject);
   expect((actual as StringObject).value).toEqual(expected);

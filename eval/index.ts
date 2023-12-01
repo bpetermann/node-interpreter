@@ -241,6 +241,22 @@ class Eval {
     }
   }
 
+  evalStringInfixExpression(
+    operator: string,
+    left: Object,
+    right: Object
+  ): Object {
+    if (operator !== '+') {
+      return this.newError(
+        `unknown operator: ${left.type()} ${operator} ${right.type()}`
+      );
+    }
+    const { value: leftVal } = left as StringObject;
+    const { value: rightVal } = right as StringObject;
+
+    return new StringObject(leftVal + rightVal);
+  }
+
   evalInfixExpression(operator: string, left: Object, right: Object): Object {
     switch (true) {
       case left.type() === ObjectType.INTEGER_OBJ &&
@@ -250,6 +266,9 @@ class Eval {
         return this.booleanToBooleanObject(left === right);
       case operator == TokenType.NOT_EQ:
         return this.booleanToBooleanObject(left !== right);
+      case left.type() === ObjectType.STRING_OBJ &&
+        right.type() === ObjectType.STRING_OBJ:
+        return this.evalStringInfixExpression(operator, left, right);
       case left.type() !== right.type():
         return this.newError(
           `type mismatch: ${left.type()} ${operator} ${right.type()}`
