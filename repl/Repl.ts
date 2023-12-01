@@ -23,8 +23,8 @@ export default class Repl {
     }
 
     const evaluated = this._eval.evaluate(program, this.env);
-    evaluated.map((item) => {
-      console.log(item ? item.inspect() : colors.gray('undefined'));
+    evaluated.map((obj) => {
+      console.log(obj ? obj.inspect() : colors.gray('undefined'));
     });
   }
 

@@ -79,7 +79,7 @@ export default class Lexer {
     while (this.input[pos] !== TokenType.STRING && pos < this.input.length) {
       pos += 1;
     }
-    // pos += 1;
+
     this.readPosition = pos + 1;
 
     return this.input.slice(this.position + 1, pos);

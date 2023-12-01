@@ -1,6 +1,6 @@
 import { Object, Environment } from '../object';
 import { Parser } from '../parser';
-import { Program, Statement } from '../ast';
+import { Program } from '../ast';
 import { Eval } from '../eval';
 
 const cleanInspect = (obj: Object) => {

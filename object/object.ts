@@ -3,7 +3,7 @@ import { Statement, Identifier } from 'ast';
 import { Env } from './environment';
 import colors from 'colors';
 
-class IntegerObject implements Object {
+class Integer implements Object {
   constructor(public value: number) {}
 
   type(): ObjectType {
@@ -15,7 +15,7 @@ class IntegerObject implements Object {
   }
 }
 
-class BooleanObject implements Object {
+class Boolean implements Object {
   constructor(public value: boolean) {}
 
   type(): ObjectType {
@@ -27,7 +27,7 @@ class BooleanObject implements Object {
   }
 }
 
-class NullObject implements Object {
+class Null implements Object {
   type(): ObjectType {
     return ObjectType.NULL_OBJ;
   }
@@ -37,7 +37,7 @@ class NullObject implements Object {
   }
 }
 
-class ReturnValueObject implements Object {
+class ReturnValue implements Object {
   constructor(public value: Object) {}
 
   type(): ObjectType {
@@ -49,7 +49,7 @@ class ReturnValueObject implements Object {
   }
 }
 
-class ErrorObject implements Object {
+class Error implements Object {
   message: string;
   constructor(
     public error: {
@@ -90,7 +90,7 @@ class ErrorObject implements Object {
   }
 }
 
-class FunctionObject implements Object {
+class Func implements Object {
   parameters: Identifier[];
   body: Statement;
   env: Env;
@@ -116,7 +116,7 @@ class FunctionObject implements Object {
   }
 }
 
-class StringObject implements Object {
+class String implements Object {
   constructor(public value: string) {}
 
   type(): ObjectType {
@@ -128,7 +128,7 @@ class StringObject implements Object {
   }
 }
 
-class BuiltinObject implements Object {
+class Builtin implements Object {
   constructor(public fn: Function) {}
 
   type(): ObjectType {
@@ -140,13 +140,4 @@ class BuiltinObject implements Object {
   }
 }
 
-export {
-  IntegerObject,
-  BooleanObject,
-  NullObject,
-  ReturnValueObject,
-  ErrorObject,
-  FunctionObject,
-  StringObject,
-  BuiltinObject,
-};
+export { ReturnValue, Integer, Builtin, Boolean, Error, String, Func, Null };

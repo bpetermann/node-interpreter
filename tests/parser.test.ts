@@ -1,13 +1,7 @@
-import {
-  LetStatement,
-  ExpressionStatement,
-  InfixExpression,
-  BooleanLiteral,
-  StringLiteral,
-} from '../ast';
 import { parse, cleanStmt } from './helper';
 import { expect } from '@jest/globals';
 import { Parser } from '../parser';
+import * as ast from '../ast';
 
 it('should parse input to statements', () => {
   const actual = parse(`
@@ -18,7 +12,7 @@ it('should parse input to statements', () => {
   const expected = ['x', 'y', 'foobar'];
 
   const stmt = actual.statements.map((stmt) => {
-    if (stmt instanceof LetStatement) {
+    if (stmt instanceof ast.LetStatement) {
       return stmt.name.tokenLiteral();
     }
   });
@@ -83,14 +77,14 @@ it('should parse infix expressions', () => {
 
   const stmt = actual.statements[0];
 
-  expect(actual.statements[0]).toBeInstanceOf(ExpressionStatement);
+  expect(actual.statements[0]).toBeInstanceOf(ast.ExpressionStatement);
   expect(
-    (actual.statements[0] as ExpressionStatement).expression
-  ).toBeInstanceOf(InfixExpression);
+    (actual.statements[0] as ast.ExpressionStatement).expression
+  ).toBeInstanceOf(ast.InfixExpression);
 
   const { left, operator, right } = (
-    actual.statements[0] as ExpressionStatement
-  ).expression as InfixExpression;
+    actual.statements[0] as ast.ExpressionStatement
+  ).expression as ast.InfixExpression;
   expect(left.tokenLiteral()).toEqual('5');
   expect(operator).toEqual('+');
   expect(right.tokenLiteral()).toEqual('3');
@@ -101,10 +95,10 @@ it('should parse boolean literals', () => {
   true;
   `);
   const expected = true;
-  const stmt = actual.statements[0] as ExpressionStatement;
+  const stmt = actual.statements[0] as ast.ExpressionStatement;
 
-  expect(actual.statements[0]).toBeInstanceOf(ExpressionStatement);
-  expect((stmt.expression as BooleanLiteral).value).toEqual(expected);
+  expect(actual.statements[0]).toBeInstanceOf(ast.ExpressionStatement);
+  expect((stmt.expression as ast.BooleanLiteral).value).toEqual(expected);
 });
 
 it('should parse grouped expressions', () => {
@@ -138,9 +132,9 @@ it('should parse if expressions', () => {
 it('should parse strings', () => {
   const actual = parse(`"hello, world";`);
   const expected = 'hello, world';
-  const stmt = actual.statements[0] as ExpressionStatement;
+  const stmt = actual.statements[0] as ast.ExpressionStatement;
 
-  expect(stmt).toBeInstanceOf(ExpressionStatement);
-  expect(stmt.expression).toBeInstanceOf(StringLiteral);
-  expect((stmt.expression as StringLiteral).value).toEqual(expected);
+  expect(stmt).toBeInstanceOf(ast.ExpressionStatement);
+  expect(stmt.expression).toBeInstanceOf(ast.StringLiteral);
+  expect((stmt.expression as ast.StringLiteral).value).toEqual(expected);
 });

@@ -1,58 +1,52 @@
-import {
-  BooleanObject,
-  ErrorObject,
-  IntegerObject,
-  ReturnValueObject,
-  StringObject,
-} from '../object';
 import { parseAndEval, cleanInspect } from './helper';
 import { expect } from '@jest/globals';
+import * as obj from '../object';
 
 it('should evaluate integer literal', () => {
   const actual = parseAndEval(`5`);
   const expected = 5;
 
-  expect(actual).toBeInstanceOf(IntegerObject);
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Integer);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });
 
 it('should evaluate prefix expressions', () => {
   const actual = parseAndEval(`!true;`);
   const expected = false;
 
-  expect(actual).toBeInstanceOf(BooleanObject);
-  expect((actual as BooleanObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Boolean);
+  expect((actual as obj.Boolean).value).toEqual(expected);
 });
 
 it('should evaluate boolean literals', () => {
   const actual = parseAndEval(`(10 + 2) * 30 == 300 + 20 * 3;`);
   const expected = true;
 
-  expect(actual).toBeInstanceOf(BooleanObject);
-  expect((actual as BooleanObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Boolean);
+  expect((actual as obj.Boolean).value).toEqual(expected);
 });
 
 it('should evaluate infix expressions', () => {
   const actual = parseAndEval(`(5 + 10 * 2 + 15 / 3) * 2 + -10;`);
   const expected = 50;
 
-  expect(actual).toBeInstanceOf(IntegerObject);
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Integer);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });
 
 it('should evaluate conditionals', () => {
   const actual = parseAndEval(`if (1 < 2) { 10 } else { 20 };`);
   const expected = 10;
 
-  expect(actual).toBeInstanceOf(IntegerObject);
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Integer);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });
 
 it('should evaluate errors', () => {
   const actual = parseAndEval(`if (10 > 1) { true + false; };`);
   const expected = 'unknown operator: BOOLEAN + BOOLEAN';
 
-  expect(actual).toBeInstanceOf(ErrorObject);
+  expect(actual).toBeInstanceOf(obj.Error);
   expect(cleanInspect(actual)).toEqual(expected);
 });
 
@@ -67,7 +61,7 @@ it('should evaluate return statements', () => {
   `);
   const expected = '10';
 
-  expect(actual).toBeInstanceOf(ReturnValueObject);
+  expect(actual).toBeInstanceOf(obj.ReturnValue);
   expect(cleanInspect(actual)).toEqual(expected);
 });
 
@@ -78,8 +72,8 @@ it('should evaluate functions', () => {
   );
   const expected = 20;
 
-  expect(actual).toBeInstanceOf(IntegerObject);
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Integer);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });
 
 it('should evaluate recursive functions', () => {
@@ -89,21 +83,21 @@ it('should evaluate recursive functions', () => {
   );
   const expected = 3628800;
 
-  expect(actual).toBeInstanceOf(IntegerObject);
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.Integer);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });
 
 it('should evaluate strings', () => {
   const actual = parseAndEval(`"Hello" + " " + "World!";`);
   const expected = 'Hello World!';
 
-  expect(actual).toBeInstanceOf(StringObject);
-  expect((actual as StringObject).value).toEqual(expected);
+  expect(actual).toBeInstanceOf(obj.String);
+  expect((actual as obj.String).value).toEqual(expected);
 });
 
 it('should evaluate strings', () => {
   const actual = parseAndEval(`len("hello world")`);
   const expected = 11;
 
-  expect((actual as IntegerObject).value).toEqual(expected);
+  expect((actual as obj.Integer).value).toEqual(expected);
 });

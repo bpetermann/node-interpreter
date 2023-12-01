@@ -1,42 +1,30 @@
-import {
-  LetStatement,
-  Program,
-  ReturnStatement,
-  ExpressionStatement,
-  Expression,
-  ExpressionType,
-  Identifier,
-  PrefixExpression,
-  IntegerLiteral,
-  InfixExpression,
-  BooleanLiteral,
-  IfExpression,
-  BlockStatement,
-  FunctionLiteral,
-  CallExpression,
-  StringLiteral,
-} from '../ast';
 import { Token, TokenType, isTokenType } from '../token';
 import { precedences } from './helper';
 import { Lexer } from '../lexer';
 import setError from './error';
+import * as ast from '../ast';
 
-type StatementType = LetStatement | ReturnStatement | ExpressionStatement;
+type StatementType =
+  | ast.LetStatement
+  | ast.ReturnStatement
+  | ast.ExpressionStatement;
 
 export default class Parser {
   private _lexer: Lexer;
   private _curToken: Token;
   private _peekToken: Token;
   private _position: number;
-  private _program: Program;
+  private _program: ast.Program;
   private _errors: string[];
-  private _prefixParseFns: { [k: string]: () => Identifier };
-  private _infixParseFns: { [k: string]: (left: Expression) => Identifier };
+  private _prefixParseFns: { [k: string]: () => ast.Identifier };
+  private _infixParseFns: {
+    [k: string]: (left: ast.Expression) => ast.Identifier;
+  };
 
   constructor(input: string) {
     this._position = 0;
     this._lexer = new Lexer(input);
-    this._program = new Program();
+    this._program = new ast.Program();
     this._peekToken = this._lexer.tokens[this._position];
     this._errors = [];
     this._prefixParseFns = {
@@ -74,7 +62,7 @@ export default class Parser {
     this._peekToken = this._lexer.tokens[this._position];
   }
 
-  parse(): Program {
+  parse(): ast.Program {
     this.nextToken();
 
     while (!isTokenType(this._curToken, TokenType.EOF)) {
@@ -118,14 +106,14 @@ export default class Parser {
     }
   }
 
-  parseLetStatement(): LetStatement | null {
-    const stmt = new LetStatement(this._curToken);
+  parseLetStatement(): ast.LetStatement | null {
+    const stmt = new ast.LetStatement(this._curToken);
 
     if (!this.expectPeek(TokenType.IDENT)) {
       return null;
     }
 
-    stmt.name = new Identifier(this._curToken);
+    stmt.name = new ast.Identifier(this._curToken);
 
     if (!this.expectPeek(TokenType.ASSIGN)) {
       return null;
@@ -133,7 +121,7 @@ export default class Parser {
 
     this.nextToken();
 
-    stmt.value = this.parseExpression(ExpressionType.LOWEST);
+    stmt.value = this.parseExpression(ast.ExpressionType.LOWEST);
 
     if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
       this.nextToken();
@@ -142,12 +130,12 @@ export default class Parser {
     return stmt;
   }
 
-  parseReturnStatement(): ReturnStatement | null {
-    const stmt = new ReturnStatement(this._curToken);
+  parseReturnStatement(): ast.ReturnStatement | null {
+    const stmt = new ast.ReturnStatement(this._curToken);
 
     this.nextToken();
 
-    stmt.returnValue = this.parseExpression(ExpressionType.LOWEST);
+    stmt.returnValue = this.parseExpression(ast.ExpressionType.LOWEST);
 
     if (isTokenType(this._peekToken, TokenType.SEMICOLON)) {
       this.nextToken();
@@ -156,20 +144,20 @@ export default class Parser {
     return stmt;
   }
 
-  parseIdentifier(): Identifier {
-    return new Identifier(this._curToken);
+  parseIdentifier(): ast.Identifier {
+    return new ast.Identifier(this._curToken);
   }
 
-  parseIntegerLiteral(): IntegerLiteral {
-    return new IntegerLiteral(this._curToken);
+  parseIntegerLiteral(): ast.IntegerLiteral {
+    return new ast.IntegerLiteral(this._curToken);
   }
 
-  parseBoolean(): BooleanLiteral {
-    return new BooleanLiteral(this._curToken);
+  parseBoolean(): ast.BooleanLiteral {
+    return new ast.BooleanLiteral(this._curToken);
   }
 
-  parseBlockStatement(): BlockStatement {
-    const block = new BlockStatement(this._curToken);
+  parseBlockStatement(): ast.BlockStatement {
+    const block = new ast.BlockStatement(this._curToken);
 
     this.nextToken();
 
@@ -189,8 +177,8 @@ export default class Parser {
     return block;
   }
 
-  parseIfExpression(): IfExpression | null {
-    const expression = new IfExpression(this._curToken);
+  parseIfExpression(): ast.IfExpression | null {
+    const expression = new ast.IfExpression(this._curToken);
 
     if (!this.expectPeek(TokenType.LPAREN)) {
       return null;
@@ -198,7 +186,7 @@ export default class Parser {
 
     this.nextToken();
 
-    expression.condition = this.parseExpression(ExpressionType.LOWEST);
+    expression.condition = this.parseExpression(ast.ExpressionType.LOWEST);
 
     if (!this.expectPeek(TokenType.RPAREN)) {
       return null;
@@ -223,7 +211,7 @@ export default class Parser {
     return expression;
   }
 
-  parseCallArguments(): Expression[] {
+  parseCallArguments(): ast.Expression[] {
     const args = [];
 
     if (isTokenType(this._peekToken, TokenType.RPAREN)) {
@@ -233,12 +221,12 @@ export default class Parser {
 
     this.nextToken();
 
-    args.push(this.parseExpression(ExpressionType.LOWEST));
+    args.push(this.parseExpression(ast.ExpressionType.LOWEST));
 
     while (isTokenType(this._peekToken, TokenType.COMMA)) {
       this.nextToken();
       this.nextToken();
-      args.push(this.parseExpression(ExpressionType.LOWEST));
+      args.push(this.parseExpression(ast.ExpressionType.LOWEST));
     }
 
     if (!this.expectPeek(TokenType.RPAREN)) {
@@ -248,8 +236,8 @@ export default class Parser {
     return args;
   }
 
-  parseCallExpression(fn: Expression): CallExpression {
-    const expression = new CallExpression(this._curToken);
+  parseCallExpression(fn: ast.Expression): ast.CallExpression {
+    const expression = new ast.CallExpression(this._curToken);
     expression.function = fn;
 
     expression.arguments = this.parseCallArguments();
@@ -257,7 +245,7 @@ export default class Parser {
     return expression;
   }
 
-  parseFunctionParameters(): Identifier[] {
+  parseFunctionParameters(): ast.Identifier[] {
     const identifiers = [];
 
     if (isTokenType(this._peekToken, TokenType.RPAREN)) {
@@ -267,13 +255,13 @@ export default class Parser {
 
     this.nextToken();
 
-    const ident = new Identifier(this._curToken);
+    const ident = new ast.Identifier(this._curToken);
     identifiers.push(ident);
 
     while (isTokenType(this._peekToken, TokenType.COMMA)) {
       this.nextToken();
       this.nextToken();
-      const ident = new Identifier(this._curToken);
+      const ident = new ast.Identifier(this._curToken);
       identifiers.push(ident);
     }
 
@@ -284,8 +272,8 @@ export default class Parser {
     return identifiers;
   }
 
-  parseFunction(): FunctionLiteral | null {
-    const func = new FunctionLiteral(this._curToken);
+  parseFunction(): ast.FunctionLiteral | null {
+    const func = new ast.FunctionLiteral(this._curToken);
 
     if (!this.expectPeek(TokenType.LPAREN)) {
       return null;
@@ -302,10 +290,10 @@ export default class Parser {
     return func;
   }
 
-  parseGroupedExpression(): Expression | null {
+  parseGroupedExpression(): ast.Expression | null {
     this.nextToken();
 
-    const expression = this.parseExpression(ExpressionType.LOWEST);
+    const expression = this.parseExpression(ast.ExpressionType.LOWEST);
 
     if (!this.expectPeek(TokenType.RPAREN)) {
       return null;
@@ -314,18 +302,18 @@ export default class Parser {
     return expression;
   }
 
-  parsePrefixExpression(): PrefixExpression {
-    const expression = new PrefixExpression(this._curToken);
+  parsePrefixExpression(): ast.PrefixExpression {
+    const expression = new ast.PrefixExpression(this._curToken);
 
     this.nextToken();
 
-    expression.right = this.parseExpression(ExpressionType.PREFIX);
+    expression.right = this.parseExpression(ast.ExpressionType.PREFIX);
 
     return expression;
   }
 
-  parseInfixExpression(left: Expression): InfixExpression {
-    const expression = new InfixExpression(this._curToken, left);
+  parseInfixExpression(left: ast.Expression): ast.InfixExpression {
+    const expression = new ast.InfixExpression(this._curToken, left);
 
     const precedence = precedences(this._curToken.type);
 
@@ -336,11 +324,11 @@ export default class Parser {
     return expression;
   }
 
-  parseStringLiteral(): StringLiteral {
-    return new StringLiteral(this._curToken);
+  parseStringLiteral(): ast.StringLiteral {
+    return new ast.StringLiteral(this._curToken);
   }
 
-  parseExpression(precedence: ExpressionType): Expression | null {
+  parseExpression(precedence: ast.ExpressionType): ast.Expression | null {
     const prefix = this._prefixParseFns[this._curToken?.type];
 
     if (!prefix) {
@@ -369,10 +357,10 @@ export default class Parser {
     return leftExpression;
   }
 
-  parseExpressionStatement(): ExpressionStatement | null {
-    const stmt = new ExpressionStatement(this._curToken);
+  parseExpressionStatement(): ast.ExpressionStatement | null {
+    const stmt = new ast.ExpressionStatement(this._curToken);
 
-    const expression = this.parseExpression(ExpressionType.LOWEST);
+    const expression = this.parseExpression(ast.ExpressionType.LOWEST);
 
     if (expression) {
       stmt.expression = expression;

@@ -1,110 +1,81 @@
-import {
-  BlockStatement,
-  BooleanLiteral,
-  CallExpression,
-  Expression,
-  ExpressionStatement,
-  FunctionLiteral,
-  Identifier,
-  IfExpression,
-  InfixExpression,
-  IntegerLiteral,
-  LetStatement,
-  NodeType,
-  PrefixExpression,
-  Program,
-  ReturnStatement,
-  Statement,
-  StringLiteral,
-} from '../ast';
-import {
-  Object,
-  ObjectType,
-  BooleanObject,
-  IntegerObject,
-  NullObject,
-  ReturnValueObject,
-  ErrorObject,
-  Environment,
-  FunctionObject,
-  EnclosedEnvironment,
-  Env,
-  StringObject,
-  BuiltinObject,
-} from '../object';
 import { builtins } from './builtins';
 import { TokenType } from '../token';
+import * as obj from '../object';
+import * as ast from '../ast';
 
-const TRUE = new BooleanObject(true);
-const FALSE = new BooleanObject(false);
-const NULL = new NullObject();
+const TRUE = new obj.Boolean(true);
+const FALSE = new obj.Boolean(false);
+const NULL = new obj.Null();
 
 class Eval {
-  evaluate(program: Program, env: Environment): Object[] {
+  evaluate(program: ast.Program, env: obj.Environment): obj.Object[] {
     const results = program.statements.map((stmt) =>
       this.evaluateNode(stmt, env)
     );
     const returnObject = results.find(
-      (result) => result instanceof ReturnValueObject
+      (result) => result instanceof obj.ReturnValue
     );
-    const errorObject = results.find((result) => result instanceof ErrorObject);
+    const Error = results.find((result) => result instanceof obj.Error);
 
-    return returnObject
-      ? [returnObject]
-      : errorObject
-      ? [errorObject]
-      : results;
+    return returnObject ? [returnObject] : Error ? [Error] : results;
   }
 
-  evaluateNode(node: NodeType, env: Env): Object {
+  evaluateNode(node: ast.NodeType, env: obj.Env): obj.Object {
     switch (true) {
-      case node instanceof ExpressionStatement:
-        return this.evaluateNode((node as ExpressionStatement).expression, env);
-      case node instanceof IntegerLiteral:
-        return new IntegerObject(+node.tokenLiteral());
-      case node instanceof BooleanLiteral:
+      case node instanceof ast.ExpressionStatement:
+        return this.evaluateNode(
+          (node as ast.ExpressionStatement).expression,
+          env
+        );
+      case node instanceof ast.IntegerLiteral:
+        return new obj.Integer(+node.tokenLiteral());
+      case node instanceof ast.BooleanLiteral:
         return this.booleanToBooleanObject(node.tokenLiteral() === 'true');
-      case node instanceof StringLiteral:
-        return new StringObject((node as StringLiteral).value);
-      case node instanceof InfixExpression:
+      case node instanceof ast.StringLiteral:
+        return new obj.String((node as ast.StringLiteral).value);
+      case node instanceof ast.InfixExpression:
         const {
           left: infixLeft,
           right: infixRight,
           operator: infixOperator,
-        } = node as InfixExpression;
+        } = node as ast.InfixExpression;
         const l = this.evaluateNode(infixLeft, env);
         if (this.isError(l)) return l;
         const r = this.evaluateNode(infixRight, env);
         if (this.isError(r)) return r;
         return this.evalInfixExpression(infixOperator, l, r);
-      case node instanceof PrefixExpression:
+      case node instanceof ast.PrefixExpression:
         const { right: prefixRight, operator: prefixOperator } =
-          node as PrefixExpression;
+          node as ast.PrefixExpression;
         const right = this.evaluateNode(prefixRight, env);
         if (this.isError(right)) return right;
         return this.evalPrefixExpression(prefixOperator, right);
-      case node instanceof BlockStatement:
-        return this.evalStatements((node as BlockStatement).statements, env);
-      case node instanceof IfExpression:
-        return this.evalIfExpression(node as IfExpression, env);
-      case node instanceof ReturnStatement:
-        const { returnValue } = node as ReturnStatement;
+      case node instanceof ast.BlockStatement:
+        return this.evalStatements(
+          (node as ast.BlockStatement).statements,
+          env
+        );
+      case node instanceof ast.IfExpression:
+        return this.evalIfExpression(node as ast.IfExpression, env);
+      case node instanceof ast.ReturnStatement:
+        const { returnValue } = node as ast.ReturnStatement;
         const val = this.evaluateNode(returnValue, env);
         if (this.isError(val)) return val;
-        return new ReturnValueObject(val);
-      case node instanceof Identifier:
-        return this.evalIdentifier(node as Identifier, env);
-      case node instanceof LetStatement:
-        const { name, value } = node as LetStatement;
+        return new obj.ReturnValue(val);
+      case node instanceof ast.Identifier:
+        return this.evalIdentifier(node as ast.Identifier, env);
+      case node instanceof ast.LetStatement:
+        const { name, value } = node as ast.LetStatement;
         const letValue = this.evaluateNode(value, env);
         if (this.isError(letValue)) return letValue;
         env.set(name.value, letValue);
         break;
-      case node instanceof FunctionLiteral:
-        const { parameters, body } = node as FunctionLiteral;
-        return new FunctionObject(parameters, env, body);
-      case node instanceof CallExpression:
-        const { function: fn, arguments: callArgs } = node as CallExpression;
+      case node instanceof ast.FunctionLiteral:
+        const { parameters, body } = node as ast.FunctionLiteral;
+        return new obj.Func(parameters, env, body);
+      case node instanceof ast.CallExpression:
+        const { function: fn, arguments: callArgs } =
+          node as ast.CallExpression;
         const func = this.evaluateNode(fn, env);
         if (this.isError(func)) return func;
         const args = this.evalExpressions(callArgs, env);
@@ -115,67 +86,67 @@ class Eval {
     }
   }
 
-  evalStatements(stmts: Statement[], env: Env): Object {
+  evalStatements(stmts: ast.Statement[], env: obj.Env): obj.Object {
     const results = stmts.map((stmt) => this.evaluateNode(stmt, env));
 
     return (
-      results.find((result) => result instanceof ReturnValueObject) ??
-      results.filter((result) => result instanceof ErrorObject)[0] ??
-      results.filter((result) => !(result instanceof NullObject))[0] ??
+      results.find((result) => result instanceof obj.ReturnValue) ??
+      results.filter((result) => result instanceof obj.Error)[0] ??
+      results.filter((result) => !(result instanceof obj.Null))[0] ??
       NULL
     );
   }
 
-  newError(error: { type?: ErrorType; msg?: string }): ErrorObject {
-    return new ErrorObject(error);
+  newError(error: { type?: ErrorType; msg?: string }): obj.Error {
+    return new obj.Error(error);
   }
 
-  isError(obj: Object): boolean {
-    if (obj !== null) {
-      return obj.type() === ObjectType.ERROR_OBJ;
+  isError(object: obj.Object): boolean {
+    if (object !== null) {
+      return object.type() === obj.ObjectType.ERROR_OBJ;
     }
     return false;
   }
 
-  applyFunction(fn: Object, args: Object[]): Object {
+  applyFunction(fn: obj.Object, args: obj.Object[]): obj.Object {
     switch (true) {
-      case fn instanceof FunctionObject:
-        const func = fn as FunctionObject;
+      case fn instanceof obj.Func:
+        const func = fn as obj.Func;
         const extendedEnv = this.extendFunctionEnv(func, args);
         const evaluated = this.evaluateNode(func.body, extendedEnv);
         return this.unwrapReturnValue(evaluated);
-      case fn instanceof BuiltinObject:
-        const builtin = fn as BuiltinObject;
+      case fn instanceof obj.Builtin:
+        const builtin = fn as obj.Builtin;
         return builtin.fn(...args);
       default:
         return this.newError({ type: 'function', msg: fn.type() });
     }
   }
 
-  extendFunctionEnv(fn: FunctionObject, args: Object[]): EnclosedEnvironment {
-    const env = new EnclosedEnvironment(fn.env as Environment);
+  extendFunctionEnv(fn: obj.Func, args: obj.Object[]): obj.EnclosedEnvironment {
+    const env = new obj.EnclosedEnvironment(fn.env as obj.Environment);
 
     fn.parameters.map((param, idx) => env.set(param.value, args[idx]));
 
     return env;
   }
 
-  unwrapReturnValue(obj: Object): Object {
-    if (obj instanceof ReturnValueObject) {
-      return obj.value;
+  unwrapReturnValue(object: obj.Object): obj.Object {
+    if (object instanceof obj.ReturnValue) {
+      return object.value;
     }
 
-    return obj;
+    return object;
   }
 
-  evalExpressions(exps: Expression[], env: Env): Object[] {
+  evalExpressions(exps: ast.Expression[], env: obj.Env): obj.Object[] {
     const result = exps.map((exp) => this.evaluateNode(exp, env));
-    const errorObject = result.find((result) => result instanceof ErrorObject);
+    const Error = result.find((result) => result instanceof obj.Error);
 
-    return errorObject ? [errorObject] : result;
+    return Error ? [Error] : result;
   }
 
-  evalIdentifier(node: Identifier, env: Env): Object {
+  evalIdentifier(node: ast.Identifier, env: obj.Env): obj.Object {
     if (env.get(node.value)) {
       return env.get(node.value);
     }
@@ -187,7 +158,7 @@ class Eval {
     return this.newError({ type: 'identifier', msg: node.value });
   }
 
-  isTruthy(object: Object): boolean {
+  isTruthy(object: obj.Object): boolean {
     switch (object) {
       case NULL:
         return false;
@@ -200,7 +171,7 @@ class Eval {
     }
   }
 
-  evalIfExpression(expression: IfExpression, env: Env): Object {
+  evalIfExpression(expression: ast.IfExpression, env: obj.Env): obj.Object {
     const condition = this.evaluateNode(expression.condition, env);
 
     if (this.isError(condition)) return condition;
@@ -214,27 +185,27 @@ class Eval {
     }
   }
 
-  booleanToBooleanObject(assertion: boolean): BooleanObject {
+  booleanToBooleanObject(assertion: boolean): obj.Boolean {
     return assertion ? TRUE : FALSE;
   }
 
   evalIntegerInfixExpression(
     operator: string,
-    left: Object,
-    right: Object
-  ): Object {
-    const leftVal = (left as IntegerObject).value;
-    const rightVal = (right as IntegerObject).value;
+    left: obj.Object,
+    right: obj.Object
+  ): obj.Object {
+    const leftVal = (left as obj.Integer).value;
+    const rightVal = (right as obj.Integer).value;
 
     switch (operator) {
       case TokenType.PLUS:
-        return new IntegerObject(leftVal + rightVal);
+        return new obj.Integer(leftVal + rightVal);
       case TokenType.MINUS:
-        return new IntegerObject(leftVal - rightVal);
+        return new obj.Integer(leftVal - rightVal);
       case TokenType.ASTERISK:
-        return new IntegerObject(leftVal * rightVal);
+        return new obj.Integer(leftVal * rightVal);
       case TokenType.SLASH:
-        return new IntegerObject(leftVal / rightVal);
+        return new obj.Integer(leftVal / rightVal);
       case TokenType.LT:
         return this.booleanToBooleanObject(leftVal < rightVal);
       case TokenType.GT:
@@ -253,32 +224,36 @@ class Eval {
 
   evalStringInfixExpression(
     operator: string,
-    left: Object,
-    right: Object
-  ): Object {
+    left: obj.Object,
+    right: obj.Object
+  ): obj.Object {
     if (operator !== '+') {
       return this.newError({
         type: 'operator',
         msg: `${left.type()} ${operator} ${right.type()}`,
       });
     }
-    const { value: leftVal } = left as StringObject;
-    const { value: rightVal } = right as StringObject;
+    const { value: leftVal } = left as obj.String;
+    const { value: rightVal } = right as obj.String;
 
-    return new StringObject(leftVal + rightVal);
+    return new obj.String(leftVal + rightVal);
   }
 
-  evalInfixExpression(operator: string, left: Object, right: Object): Object {
+  evalInfixExpression(
+    operator: string,
+    left: obj.Object,
+    right: obj.Object
+  ): obj.Object {
     switch (true) {
-      case left.type() === ObjectType.INTEGER_OBJ &&
-        right.type() === ObjectType.INTEGER_OBJ:
+      case left.type() === obj.ObjectType.INTEGER_OBJ &&
+        right.type() === obj.ObjectType.INTEGER_OBJ:
         return this.evalIntegerInfixExpression(operator, left, right);
       case operator == TokenType.EQ:
         return this.booleanToBooleanObject(left === right);
       case operator == TokenType.NOT_EQ:
         return this.booleanToBooleanObject(left !== right);
-      case left.type() === ObjectType.STRING_OBJ &&
-        right.type() === ObjectType.STRING_OBJ:
+      case left.type() === obj.ObjectType.STRING_OBJ &&
+        right.type() === obj.ObjectType.STRING_OBJ:
         return this.evalStringInfixExpression(operator, left, right);
       case left.type() !== right.type():
         return this.newError({
@@ -293,7 +268,7 @@ class Eval {
     }
   }
 
-  bangOperatorExpression(right: Object): Object {
+  bangOperatorExpression(right: obj.Object): obj.Object {
     switch (right) {
       case TRUE:
         return FALSE;
@@ -306,15 +281,15 @@ class Eval {
     }
   }
 
-  minusPrefixOperatorExpression(right: Object): Object {
-    if (right.type() !== ObjectType.INTEGER_OBJ) {
+  minusPrefixOperatorExpression(right: obj.Object): obj.Object {
+    if (right.type() !== obj.ObjectType.INTEGER_OBJ) {
       return this.newError({ type: 'operator', msg: `-${right.type()}` });
     }
-    const value = (right as IntegerObject).value;
-    return new IntegerObject(-value);
+    const value = (right as obj.Integer).value;
+    return new obj.Integer(-value);
   }
 
-  evalPrefixExpression(operator: string, right: Object): Object {
+  evalPrefixExpression(operator: string, right: obj.Object): obj.Object {
     switch (operator) {
       case TokenType.BANG:
         return this.bangOperatorExpression(right);

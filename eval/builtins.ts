@@ -1,64 +1,56 @@
-import {
-  BuiltinObject,
-  ErrorObject,
-  IntegerObject,
-  StringObject,
-} from '../object';
-import { Object } from '../object';
+import * as obj from '../object';
 
 const builtins = {
-  len: new BuiltinObject((...args: any): Object => {
+  len: new obj.Builtin((...args: any): obj.Object => {
     if (args.length !== 1) {
-      return new ErrorObject({
+      return new obj.Error({
         type: 'args',
         msg: args.length,
       });
     }
-    switch (true) {
-      case args[0] instanceof StringObject:
-        return new IntegerObject(args[0].value.length);
-      default:
-        return new ErrorObject({
-          type: 'support',
-          msg: 'len',
-          got: args[0].type(),
-        });
+    if (!(args[0] instanceof obj.String)) {
+      return new obj.Error({
+        type: 'support',
+        msg: 'len',
+        got: args[0].type(),
+      });
     }
+
+    return new obj.Integer(args[0].value.length);
   }),
 
-  toLower: new BuiltinObject((...args: any): Object => {
+  toLower: new obj.Builtin((...args: any): obj.Object => {
     if (args.length !== 1) {
-      return new ErrorObject({ type: 'args', msg: args.length });
+      return new obj.Error({ type: 'args', msg: args.length });
     }
-    switch (true) {
-      case args[0] instanceof StringObject:
-        return new StringObject(args[0].value.toLowerCase());
-      default:
-        return new ErrorObject({
-          type: 'support',
-          msg: 'toLower',
-          got: args[0].type(),
-        });
+    if (!(args[0] instanceof obj.String)) {
+      return new obj.Error({
+        type: 'support',
+        msg: 'toLower',
+        got: args[0].type(),
+      });
     }
+
+    return new obj.String(args[0].value.toLowerCase());
   }),
 
-  toUpper: new BuiltinObject((...args: any): Object => {
+  toUpper: new obj.Builtin((...args: any): obj.Object => {
     if (args.length !== 1) {
-      return new ErrorObject({
+      return new obj.Error({
         type: 'args',
         msg: args.length,
       });
     }
-    switch (true) {
-      case args[0] instanceof StringObject:
-        return new StringObject(args[0].value.toUpperCase());
-      default:
-        return new ErrorObject({
-          type: 'support',
-          msg: 'toUpper',
-          got: args[0].type(),
-        });
+
+    if (!(args[0] instanceof obj.String)) {
+      return new obj.Error({
+        type: 'support',
+        msg: 'toUpper',
+        got: args[0].type(),
+      });
     }
+
+    return new obj.String(args[0].value.toUpperCase());
   }),
 };
 
