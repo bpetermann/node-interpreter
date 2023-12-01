@@ -138,3 +138,9 @@ it('should parse strings', () => {
   expect(stmt.expression).toBeInstanceOf(ast.StringLiteral);
   expect((stmt.expression as ast.StringLiteral).value).toEqual(expected);
 });
+
+it('should parse arrays', () => {
+  const actual = parse(`[1,2,3,4];`);
+
+  expect(cleanStmt(actual.getString())).toBe('[1,2,3,4]');
+});

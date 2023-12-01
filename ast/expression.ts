@@ -182,6 +182,24 @@ class StringLiteral implements Expression {
   expressionNode: () => void;
 }
 
+class ArrayLiteral implements Expression {
+  elements: Expression[];
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    return colors.magenta(
+      `[${this.elements.map((el) => el.getString()).join(',')}]`
+    );
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -193,4 +211,5 @@ export {
   FunctionLiteral,
   CallExpression,
   StringLiteral,
+  ArrayLiteral,
 };

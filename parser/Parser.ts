@@ -38,6 +38,7 @@ export default class Parser {
       [TokenType.IF]: this.parseIfExpression.bind(this),
       [TokenType.FUNCTION]: this.parseFunction.bind(this),
       [TokenType.STRING]: this.parseStringLiteral.bind(this),
+      [TokenType.LBRACKET]: this.parseArray.bind(this),
     };
     this._infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -211,36 +212,11 @@ export default class Parser {
     return expression;
   }
 
-  parseCallArguments(): ast.Expression[] {
-    const args = [];
-
-    if (isTokenType(this._peekToken, TokenType.RPAREN)) {
-      this.nextToken();
-      return args;
-    }
-
-    this.nextToken();
-
-    args.push(this.parseExpression(ast.ExpressionType.LOWEST));
-
-    while (isTokenType(this._peekToken, TokenType.COMMA)) {
-      this.nextToken();
-      this.nextToken();
-      args.push(this.parseExpression(ast.ExpressionType.LOWEST));
-    }
-
-    if (!this.expectPeek(TokenType.RPAREN)) {
-      return null;
-    }
-
-    return args;
-  }
-
   parseCallExpression(fn: ast.Expression): ast.CallExpression {
     const expression = new ast.CallExpression(this._curToken);
     expression.function = fn;
 
-    expression.arguments = this.parseCallArguments();
+    expression.arguments = this.parseExpressionList(TokenType.RPAREN);
 
     return expression;
   }
@@ -326,6 +302,39 @@ export default class Parser {
 
   parseStringLiteral(): ast.StringLiteral {
     return new ast.StringLiteral(this._curToken);
+  }
+
+  parseExpressionList(end: TokenType): ast.Expression[] {
+    let list = [];
+
+    if (isTokenType(this._peekToken, end)) {
+      this.nextToken();
+      return list;
+    }
+
+    this.nextToken();
+
+    list.push(this.parseExpression(ast.ExpressionType.LOWEST));
+
+    while (isTokenType(this._peekToken, TokenType.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      list.push(this.parseExpression(ast.ExpressionType.LOWEST));
+    }
+
+    if (!this.expectPeek(end)) {
+      return null;
+    }
+
+    return list;
+  }
+
+  parseArray(): ast.ArrayLiteral {
+    const arr = new ast.ArrayLiteral(this._curToken);
+
+    arr.elements = this.parseExpressionList(TokenType.RBRACKET);
+
+    return arr;
   }
 
   parseExpression(precedence: ast.ExpressionType): ast.Expression | null {
