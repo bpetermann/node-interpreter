@@ -1,21 +1,7 @@
+import { ObjectType, Object } from './types';
 import { Statement, Identifier } from 'ast';
-import { Env } from './Environment';
+import { Env } from './environment';
 import colors from 'colors';
-
-enum ObjectType {
-  INTEGER_OBJ = 'INTEGER',
-  BOOLEAN_OBJ = 'BOOLEAN',
-  NULL_OBJ = 'NULL',
-  RETURN_VALUE_OBJ = 'RETURN_VALUE',
-  ERROR_OBJ = 'ERROR',
-  FUNCTION_OBJ = 'FUNCTION',
-  STRING_OBJ = 'STRING',
-}
-
-interface Object {
-  type: () => ObjectType;
-  inspect: () => string;
-}
 
 class IntegerObject implements Object {
   constructor(public value: number) {}
@@ -111,16 +97,27 @@ class StringObject implements Object {
   inspect(): string {
     return colors.cyan(this.value);
   }
-} 
+}
+
+class BuiltinObject implements Object {
+  constructor(public fn: Function) {}
+
+  type(): ObjectType {
+    return ObjectType.BUILTIN_OBJ;
+  }
+
+  inspect(): string {
+    return colors.magenta('builtin function');
+  }
+}
 
 export {
-  Object,
-  ObjectType,
   IntegerObject,
   BooleanObject,
   NullObject,
   ReturnValueObject,
   ErrorObject,
   FunctionObject,
-  StringObject
+  StringObject,
+  BuiltinObject,
 };

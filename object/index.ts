@@ -1,12 +1,12 @@
 export {
-  Object,
-  ObjectType,
   IntegerObject,
   BooleanObject,
   NullObject,
   ReturnValueObject,
   ErrorObject,
   FunctionObject,
-  StringObject
+  StringObject,
+  BuiltinObject
 } from './object';
-export { Env, Environment, EnclosedEnvironment } from './Environment';
+export { Env, Environment, EnclosedEnvironment } from './environment';
+export { Object, ObjectType } from './types';

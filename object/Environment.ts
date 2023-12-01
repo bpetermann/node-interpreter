@@ -1,9 +1,5 @@
 import { Object } from './index';
-
-interface Env {
-  get: (name: string) => Object;
-  set: (name: string, val: Object) => Object;
-}
+import { Env } from './types';
 
 class Environment implements Env {
   private _store: { [k: string]: Object };

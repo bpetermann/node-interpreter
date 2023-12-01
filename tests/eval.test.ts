@@ -100,3 +100,10 @@ it('should evaluate strings', () => {
   expect(actual).toBeInstanceOf(StringObject);
   expect((actual as StringObject).value).toEqual(expected);
 });
+
+it('should evaluate strings', () => {
+  const actual = parseAndEval(`len("hello world")`);
+  const expected = 11;
+
+  expect((actual as IntegerObject).value).toEqual(expected);
+});
