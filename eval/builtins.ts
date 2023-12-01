@@ -22,6 +22,38 @@ const builtins = {
         );
     }
   }),
+
+  toLower: new BuiltinObject((...args: any): Object => {
+    if (args.length !== 1) {
+      return new ErrorObject(
+        `wrong number of arguments. got=${args.length}, want=1`
+      );
+    }
+    switch (true) {
+      case args[0] instanceof StringObject:
+        return new StringObject(args[0].value.toLowerCase());
+      default:
+        return new ErrorObject(
+          `argument to "toLower" not supporte, got ${args[0].type()}`
+        );
+    }
+  }),
+
+  toUpper: new BuiltinObject((...args: any): Object => {
+    if (args.length !== 1) {
+      return new ErrorObject(
+        `wrong number of arguments. got=${args.length}, want=1`
+      );
+    }
+    switch (true) {
+      case args[0] instanceof StringObject:
+        return new StringObject(args[0].value.toUpperCase());
+      default:
+        return new ErrorObject(
+          `argument to "toLower" not supporte, got ${args[0].type()}`
+        );
+    }
+  }),
 };
 
 export { builtins };
