@@ -89,6 +89,13 @@ class Eval {
         if (elements.length === 1 && this.isError(elements[0]))
           return elements[0];
         return new obj.Array(elements);
+      case node instanceof ast.IndexExpression:
+        const idxExp = node as ast.IndexExpression;
+        const left = this.evaluateNode(idxExp.left, env);
+        if (this.isError(left)) return left;
+        const index = this.evaluateNode(idxExp.index, env);
+        if (this.isError(index)) return index;
+        return this.evalIndexExpression(left, index);
       default:
         return NULL;
     }
@@ -287,6 +294,16 @@ class Eval {
       default:
         return FALSE;
     }
+  }
+
+  evalIndexExpression(arr: obj.Object, index: obj.Object): obj.Object {
+    const { elements } = arr as obj.Array;
+    const idx = (index as obj.Integer).value;
+    const max = elements.length - 1;
+
+    if (idx < 0 || idx > max) return NULL;
+
+    return elements[idx];
   }
 
   minusPrefixOperatorExpression(right: obj.Object): obj.Object {

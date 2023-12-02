@@ -107,3 +107,9 @@ it('should evaluate strings', () => {
 
   expect(cleanInspect(actual)).toEqual('[1,4,6]');
 });
+
+it('should evaluate index operator expressions', () => {
+  const actual = parseAndEval(`[1, 2, 3][2];`);
+
+  expect(cleanInspect(actual)).toEqual('3');
+});
