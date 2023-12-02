@@ -1,4 +1,4 @@
-import { TokenType } from './tokenType';
+import { TokenType } from './types';
 
 type Token = {
   type: TokenType;

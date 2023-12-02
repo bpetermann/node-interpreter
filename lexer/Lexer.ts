@@ -27,7 +27,9 @@ export default class Lexer {
   }
 
   private isLetter(char: string): boolean {
-    return 'abcdefghijklmnopqrstuvwxyz_'.includes(char.toLowerCase());
+    return char
+      ? 'abcdefghijklmnopqrstuvwxyz_'.includes(char.toLowerCase())
+      : false;
   }
 
   private isDigit(char: string): boolean {
