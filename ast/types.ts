@@ -20,6 +20,7 @@ enum ExpressionType {
   PRODUCT,
   PREFIX,
   CALL,
+  INDEX,
 }
 
 export { NodeType, Statement, ExpressionType, Expression };

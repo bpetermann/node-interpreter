@@ -13,6 +13,7 @@ const precedences = (type: TokenType): number => {
       [TokenType.SLASH]: ExpressionType.PRODUCT,
       [TokenType.ASTERISK]: ExpressionType.PRODUCT,
       [TokenType.LPAREN]: ExpressionType.CALL,
+      [TokenType.LBRACKET]: ExpressionType.INDEX,
     }[type] || ExpressionType.LOWEST
   );
 };

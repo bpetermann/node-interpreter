@@ -102,11 +102,9 @@ it('should parse boolean literals', () => {
 });
 
 it('should parse grouped expressions', () => {
-  const actual = parse(`
-  1 + (2 + 3) + 4;
-  `);
+  const actual = parse(`a * [1, 2, 3, 4][b * c] * d;`);
 
-  const expected = '((1 + (2 + 3)) + 4)';
+  const expected = '((a * ([1,2,3,4][(b * c)])) * d)';
 
   expect(cleanStmt(actual.getString())).toBe(expected);
 });
@@ -143,4 +141,15 @@ it('should parse arrays', () => {
   const actual = parse(`[1,2,3,4];`);
 
   expect(cleanStmt(actual.getString())).toBe('[1,2,3,4]');
+});
+
+it('should parse index expressions', () => {
+  const actual = parse('myArray[1 + 1];');
+  const stmt = actual.statements[0] as ast.ExpressionStatement;
+
+  expect(stmt.expression).toBeInstanceOf(ast.IndexExpression);
+  const { left, index } = stmt.expression as ast.IndexExpression;
+
+  expect(left.tokenLiteral()).toBe('myArray');
+  expect(cleanStmt(index.getString())).toBe('(1 + 1)');
 });

@@ -50,6 +50,7 @@ export default class Parser {
       [TokenType.LT]: this.parseInfixExpression.bind(this),
       [TokenType.GT]: this.parseInfixExpression.bind(this),
       [TokenType.LPAREN]: this.parseCallExpression.bind(this),
+      [TokenType.LBRACKET]: this.parseIndexExpression.bind(this),
     };
   }
 
@@ -335,6 +336,19 @@ export default class Parser {
     arr.elements = this.parseExpressionList(TokenType.RBRACKET);
 
     return arr;
+  }
+
+  parseIndexExpression(left: ast.Expression): ast.Expression {
+    const exp = new ast.IndexExpression(this._curToken, left);
+
+    this.nextToken();
+    exp.index = this.parseExpression(ast.ExpressionType.LOWEST);
+
+    if (!this.expectPeek(TokenType.RBRACKET)) {
+      return null;
+    }
+
+    return exp;
   }
 
   parseExpression(precedence: ast.ExpressionType): ast.Expression | null {

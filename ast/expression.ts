@@ -200,6 +200,27 @@ class ArrayLiteral implements Expression {
   expressionNode: () => void;
 }
 
+class IndexExpression implements Expression {
+  left: Expression;
+  index: Expression;
+
+  constructor(public token: Token, left: Expression) {
+    this.left = left;
+  }
+
+  getString(): string {
+    return colors.magenta(
+      `(${this.left.getString()}[${this.index.getString()}])`
+    );
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,
@@ -212,4 +233,5 @@ export {
   CallExpression,
   StringLiteral,
   ArrayLiteral,
+  IndexExpression,
 };
