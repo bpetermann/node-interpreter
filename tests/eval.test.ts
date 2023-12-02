@@ -101,3 +101,9 @@ it('should evaluate strings', () => {
 
   expect((actual as obj.Integer).value).toEqual(expected);
 });
+
+it('should evaluate strings', () => {
+  const actual = parseAndEval(`[1, 2 * 2, 3 + 3];`);
+
+  expect(cleanInspect(actual)).toEqual('[1,4,6]');
+});

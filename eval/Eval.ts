@@ -81,6 +81,14 @@ class Eval {
         const args = this.evalExpressions(callArgs, env);
         if (args.length === 1 && this.isError(args[0])) return args[0];
         return this.applyFunction(func, args);
+      case node instanceof ast.ArrayLiteral:
+        const elements = this.evalExpressions(
+          (node as ast.ArrayLiteral).elements,
+          env
+        );
+        if (elements.length === 1 && this.isError(elements[0]))
+          return elements[0];
+        return new obj.Array(elements);
       default:
         return NULL;
     }

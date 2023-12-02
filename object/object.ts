@@ -140,4 +140,28 @@ class Builtin implements Object {
   }
 }
 
-export { ReturnValue, Integer, Builtin, Boolean, Error, String, Func, Null };
+class Array implements Object {
+  constructor(public elements: Object[]) {}
+
+  type(): ObjectType {
+    return ObjectType.ARRAY_OBJ;
+  }
+
+  inspect(): string {
+    return colors.magenta(
+      `[${this.elements.map((el) => el.inspect()).join(',')}]`
+    );
+  }
+}
+
+export {
+  ReturnValue,
+  Integer,
+  Builtin,
+  Boolean,
+  Error,
+  String,
+  Func,
+  Null,
+  Array,
+};
