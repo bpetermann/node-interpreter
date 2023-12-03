@@ -68,7 +68,7 @@ const builtins = {
       });
     }
 
-    return new obj.String(args[0].elements[0].inspect());
+    return args[0].elements[0];
   }),
   last: new obj.Builtin((...args: any): obj.Object => {
     if (args.length !== 1)
@@ -82,7 +82,7 @@ const builtins = {
       });
     }
     const { elements } = args[0];
-    return new obj.String(elements[elements.length - 1].inspect());
+    return elements[elements.length - 1];
   }),
 
   rest: new obj.Builtin((...args: any): obj.Object => {
