@@ -9,15 +9,18 @@ const NULL = new obj.Null();
 
 class Eval {
   evaluate(program: ast.Program, env: obj.Environment): obj.Object[] {
-    const results = program.statements.map((stmt) =>
-      this.evaluateNode(stmt, env)
-    );
-    const returnObject = results.find(
-      (result) => result instanceof obj.ReturnValue
-    );
-    const Error = results.find((result) => result instanceof obj.Error);
+    const results = [];
 
-    return returnObject ? [returnObject] : Error ? [Error] : results;
+    for (const statement of program.statements) {
+      const result = this.evaluateNode(statement, env);
+      results.push(result);
+
+      if (result instanceof obj.ReturnValue || result instanceof obj.Error) {
+        return [result];
+      }
+    }
+
+    return results;
   }
 
   evaluateNode(node: ast.NodeType, env: obj.Env): obj.Object {
@@ -102,14 +105,19 @@ class Eval {
   }
 
   evalStatements(stmts: ast.Statement[], env: obj.Env): obj.Object {
-    const results = stmts.map((stmt) => this.evaluateNode(stmt, env));
+    let evaluatedResult = NULL;
 
-    return (
-      results.find((result) => result instanceof obj.ReturnValue) ??
-      results.filter((result) => result instanceof obj.Error)[0] ??
-      results.filter((result) => !(result instanceof obj.Null))[0] ??
-      NULL
-    );
+    for (const stmt of stmts) {
+      const result = this.evaluateNode(stmt, env);
+
+      if (result instanceof obj.ReturnValue || result instanceof obj.Error) {
+        return result;
+      }
+
+      if (result) evaluatedResult = result;
+    }
+
+    return evaluatedResult;
   }
 
   newError(error: { type?: ErrorType; msg?: string }): obj.Error {
