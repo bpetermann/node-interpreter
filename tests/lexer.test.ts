@@ -86,6 +86,7 @@ it('should convert source code', () => {
   "foo bar";
   "hello, world";
   [1, 2];
+  {"foo": "bar"};
   `);
 
   const actual = lexer.tokens;
@@ -173,6 +174,12 @@ it('should convert source code', () => {
     { type: TokenType.COMMA, literal: ',' },
     { type: TokenType.INT, literal: '2' },
     { type: TokenType.RBRACKET, literal: ']' },
+    { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.LBRACE, literal: '{' },
+    { type: TokenType.STRING, literal: 'foo' },
+    { type: TokenType.COLON, literal: ':' },
+    { type: TokenType.STRING, literal: 'bar' },
+    { type: TokenType.RBRACE, literal: '}' },
     { type: TokenType.SEMICOLON, literal: ';' },
     { type: TokenType.EOF, literal: '' },
   ];

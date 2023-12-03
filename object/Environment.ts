@@ -2,45 +2,45 @@ import { Object } from './index';
 import { Env } from './types';
 
 class Environment implements Env {
-  private _store: { [k: string]: Object };
+  private store: { [k: string]: Object };
 
   constructor(store: { [k: string]: Object }) {
-    this._store = store;
+    this.store = store;
   }
 
   get(name: string): Object {
-    let value = this._store[name];
+    let value = this.store[name];
 
     return value;
   }
 
   set(name: string, val: Object): Object {
-    this._store[name] = val;
+    this.store[name] = val;
     return val;
   }
 }
 
 class EnclosedEnvironment implements Env {
-  private _store: { [k: string]: Object };
-  private _outer: Environment;
+  private store: { [k: string]: Object };
+  private outer: Environment;
 
   constructor(outer: Environment) {
-    this._store = {};
-    this._outer = outer;
+    this.store = {};
+    this.outer = outer;
   }
 
   get(name: string): Object {
-    let value = this._store[name];
+    let value = this.store[name];
 
     if (!value) {
-      value = this._outer.get(name);
+      value = this.outer.get(name);
     }
 
     return value;
   }
 
   set(name: string, val: Object): Object {
-    this._store[name] = val;
+    this.store[name] = val;
     return val;
   }
 }

@@ -122,6 +122,7 @@ export default class Lexer {
       case TokenType.RBRACKET:
       case TokenType.LT:
       case TokenType.GT:
+      case TokenType.COLON:
         this._tokens.push({
           type: this.char as TokenType,
           literal: this.char,

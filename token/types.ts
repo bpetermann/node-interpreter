@@ -14,6 +14,7 @@ enum TokenType {
   RBRACKET = ']',
   LBRACE = '{',
   RBRACE = '}',
+  COLON = ':',
   // Keywords
   FUNCTION = 'FUNCTION',
   LET = 'LET',
