@@ -221,6 +221,26 @@ class IndexExpression implements Expression {
   expressionNode: () => void;
 }
 
+class HashLiteral implements Expression {
+  pairs: Map<Expression, Expression>;
+
+  constructor(public token: Token) {}
+
+  getString(): string {
+    const keyValues: string[] = [];
+    for (const [key, value] of this.pairs) {
+      keyValues.push(`${key.getString()}:${value.getString()}`);
+    }
+    return colors.magenta(`{${keyValues.join(';')}}`);
+  }
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  expressionNode: () => void;
+}
+
 export {
   Expression,
   Identifier,

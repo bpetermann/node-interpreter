@@ -1,6 +1,6 @@
 import { ObjectType, Object } from './types';
 import { Statement, Identifier } from 'ast';
-import { Env } from './environment';
+import { Env } from './env';
 import colors from 'colors';
 
 class Integer implements Object {
