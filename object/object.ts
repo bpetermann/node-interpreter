@@ -154,6 +154,85 @@ class Array implements Object {
   }
 }
 
+class HashKey {
+  objType: ObjectType;
+  value: number;
+
+  public hashable(input: Object): boolean {
+    return (
+      input.type() === ObjectType.BOOLEAN_OBJ ||
+      input.type() === ObjectType.INTEGER_OBJ ||
+      input.type() === ObjectType.STRING_OBJ
+    );
+  }
+
+  hashkey(input: Object): HashKey {
+    const hashKey = new HashKey();
+    if (input.type() === ObjectType.BOOLEAN_OBJ) {
+      const { value } = input as Boolean;
+      hashKey.objType = ObjectType.BOOLEAN_OBJ;
+      hashKey.value = value ? 1 : 0;
+    }
+
+    if (input.type() === ObjectType.INTEGER_OBJ) {
+      const { value } = input as Integer;
+      hashKey.objType = ObjectType.INTEGER_OBJ;
+      hashKey.value = value;
+    }
+
+    if (input.type() === ObjectType.STRING_OBJ) {
+      const { value } = input as String;
+      let hashString = 0;
+      for (let character of value) {
+        let charCode = character.charCodeAt(0);
+        hashString = hashString << (5 - hashString);
+        hashString += charCode;
+        hashString |= hashString;
+      }
+      hashKey.objType = ObjectType.STRING_OBJ;
+      hashKey.value = hashString;
+    }
+
+    return hashKey;
+  }
+}
+
+class HashPair implements Object {
+  key: Object;
+  value: Object;
+
+  constructor(key: Object, value: Object) {
+    this.key = key;
+    this.value = value;
+  }
+
+  type(): ObjectType {
+    return ObjectType.HASH_OBJ;
+  }
+
+  inspect(): string {
+    return colors.green(`${this.key.inspect()}: ${this.value.inspect()}`);
+  }
+}
+
+class Hash implements Object {
+  pairs: Map<HashKey, HashPair>;
+
+  constructor(pairs: Map<HashKey, HashPair>) {
+    this.pairs = pairs;
+  }
+
+  type(): ObjectType {
+    return ObjectType.HASH_OBJ;
+  }
+
+  inspect(): string {
+    const keyValues: string[] = [];
+    [...this.pairs].map(([_, value]) => keyValues.push(`${value.inspect()}`));
+    return colors.magenta(`{${keyValues.join(', ')}}`);
+  }
+}
+
 export {
   ReturnValue,
   Integer,
@@ -164,4 +243,7 @@ export {
   Func,
   Null,
   Array,
+  Hash,
+  HashKey,
+  HashPair,
 };

@@ -39,6 +39,7 @@ export default class Parser {
       [TokenType.FUNCTION]: this.parseFunction.bind(this),
       [TokenType.STRING]: this.parseStringLiteral.bind(this),
       [TokenType.LBRACKET]: this.parseArray.bind(this),
+      [TokenType.LBRACE]: this.parseHashLiteral.bind(this),
     };
     this.infixParseFns = {
       [TokenType.PLUS]: this.parseInfixExpression.bind(this),
@@ -349,6 +350,38 @@ export default class Parser {
     }
 
     return exp;
+  }
+
+  parseHashLiteral(): ast.HashLiteral {
+    const hash = new ast.HashLiteral(this.curToken);
+    hash.pairs = new Map();
+
+    while (!isTokenType(this.peekToken, TokenType.RBRACE)) {
+      this.nextToken();
+      const key = this.parseExpression(ast.ExpressionType.LOWEST);
+
+      if (!this.expectPeek(TokenType.COLON)) {
+        return null;
+      }
+
+      this.nextToken();
+
+      const value = this.parseExpression(ast.ExpressionType.LOWEST);
+
+      hash.pairs.set(key, value);
+
+      if (
+        !isTokenType(this.peekToken, TokenType.RBRACE) &&
+        !this.expectPeek(TokenType.COMMA)
+      ) {
+        return null;
+      }
+    }
+
+    if (!this.expectPeek(TokenType.RBRACE)) {
+      return null;
+    }
+    return hash;
   }
 
   parseExpression(precedence: ast.ExpressionType): ast.Expression | null {

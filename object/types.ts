@@ -13,6 +13,7 @@ enum ObjectType {
   STRING_OBJ = 'STRING',
   BUILTIN_OBJ = 'BUILTIN',
   ARRAY_OBJ = 'ARRAY',
+  HASH_OBJ = "HASH"
 }
 
 interface Object {

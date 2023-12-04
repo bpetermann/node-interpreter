@@ -228,10 +228,10 @@ class HashLiteral implements Expression {
 
   getString(): string {
     const keyValues: string[] = [];
-    for (const [key, value] of this.pairs) {
-      keyValues.push(`${key.getString()}:${value.getString()}`);
-    }
-    return colors.magenta(`{${keyValues.join(';')}}`);
+    Array.from(this.pairs).map(([key, value]) =>
+      keyValues.push(`${key.getString()}: ${value.getString()}`)
+    );
+    return colors.magenta(`{${keyValues.join(', ')}}`);
   }
 
   tokenLiteral(): string {
@@ -254,4 +254,5 @@ export {
   StringLiteral,
   ArrayLiteral,
   IndexExpression,
+  HashLiteral,
 };

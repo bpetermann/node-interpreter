@@ -153,3 +153,23 @@ it('should parse index expressions', () => {
   expect(left.tokenLiteral()).toBe('myArray');
   expect(cleanStmt(index.getString())).toBe('(1 + 1)');
 });
+
+it('should parse hash literals', () => {
+  const actual = parse('{"one": 1, "two": 2, "three": 3}');
+  const stmt = actual.statements[0] as ast.ExpressionStatement;
+
+  expect(stmt.expression).toBeInstanceOf(ast.HashLiteral);
+
+  const hash = stmt.expression as ast.HashLiteral;
+  expect(cleanStmt(hash.getString())).toBe('{one: 1, two: 2, three: 3}');
+});
+
+it('should parse hash literals with expressions', () => {
+  const actual = parse('{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}');
+  const stmt = actual.statements[0] as ast.ExpressionStatement;
+
+  expect(stmt.expression).toBeInstanceOf(ast.HashLiteral);
+
+  const hash = stmt.expression as ast.HashLiteral;
+  expect(cleanStmt(hash.getString())).toBe('{one: (0 + 1), two: (10 - 8), three: (15 / 5)}');
+});

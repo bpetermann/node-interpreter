@@ -6,6 +6,7 @@ import * as ast from '../ast';
 const TRUE = new obj.Boolean(true);
 const FALSE = new obj.Boolean(false);
 const NULL = new obj.Null();
+const HASHKEY = new obj.HashKey();
 
 class Eval {
   evaluate(program: ast.Program, env: obj.Environment): obj.Object[] {
@@ -99,6 +100,8 @@ class Eval {
         const index = this.evaluateNode(idxExp.index, env);
         if (this.isError(index)) return index;
         return this.evalIndexExpression(left, index);
+      case node instanceof ast.HashLiteral:
+        return this.evalHashLiteral(node as ast.HashLiteral, env);
       default:
         return NULL;
     }
@@ -118,6 +121,30 @@ class Eval {
     }
 
     return evaluatedResult;
+  }
+
+  evalHashLiteral(node: ast.HashLiteral, env: obj.Env): obj.Object {
+    const pairs = new Map();
+
+    node.pairs.forEach((valueNode, keyNode) => {
+      const key = this.evaluateNode(keyNode, env);
+
+      if (this.isError(key)) return key;
+
+      if (!HASHKEY.hashable(key)) {
+        return this.newError({ msg: `unusable as hash key: ${key.type()}` });
+      }
+
+      const value = this.evaluateNode(valueNode, env);
+
+      if (this.isError(value)) return value;
+
+      const hashed = new obj.HashKey().hashkey(key);
+      const pair = new obj.HashPair(key, value);
+      pairs.set(hashed, pair);
+    });
+
+    return new obj.Hash(pairs);
   }
 
   newError(error: { type?: ErrorType; msg?: string }): obj.Error {
