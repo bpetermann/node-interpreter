@@ -1,6 +1,6 @@
 # Node Interpreter
 
-A Node/Typescript implementation of an interpreter, drawing inspiration from the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
+A Node/Typescript interpreter, based of the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
 
 ## Installation
 
@@ -42,33 +42,23 @@ This interpreter employs a process of lexical analysis, parsing, and evaluation 
 
 ## Syntax Overview
 
-The programming language syntax includes various delimiters, keywords, and operators:
+The syntax embodies a rich spectrum of functionalities, managing mathematical expressions, variable assignments, function definitions, calls, conditionals, and returns. It adeptly handles concepts like higher-order functions and closures.
 
-Operators
+Additionally, the interpreter accommodates diverse data types—integers, booleans, strings, arrays, and hashes.
 
-- \==
-- \!=
-- \=
-- \+
-- \-
-- \/
-- \*
-- \<
-- \>
-
-Keywords
-
-- if
-- fn
-- let
-- else
-- true
-- false
-- return
+It also features a set of built-in functions tailored to expedite string/array operations and console output logging.
 
 ## Usage Example
 
 Here's a basic example illustrating the declaration and invocation of a function:
+
+```js
+>> let a = 2; // Declare a variable
+>> let baz = ["foo", "bar"]; // Declare a array
+>> baz[0]; // Acesss array
+>> let person = {"name": "Alice"}; // Declare a hash map
+>> person["name"]; // Access map
+```
 
 ```js
 >> let a = 2; // Declare a variable
@@ -91,7 +81,7 @@ Example of closures:
 Close the REPL:
 
 ```js
-eof
+eof;
 ```
 
 ## Tests
