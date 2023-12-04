@@ -134,6 +134,12 @@ const builtins = {
     elements.pop();
     return new obj.Array(elements);
   }),
+
+  log: new obj.Builtin((...args: any): obj.Object => {
+    args.map((arg: obj.Object) => console.log(arg.inspect()));
+
+    return NULL;
+  }),
 };
 
 export { builtins };
