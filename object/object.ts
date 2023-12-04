@@ -216,9 +216,9 @@ class HashPair implements Object {
 }
 
 class Hash implements Object {
-  pairs: Map<HashKey, HashPair>;
+  pairs: Map<number, HashPair>;
 
-  constructor(pairs: Map<HashKey, HashPair>) {
+  constructor(pairs: Map<number, HashPair>) {
     this.pairs = pairs;
   }
 

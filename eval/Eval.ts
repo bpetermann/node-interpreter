@@ -139,7 +139,7 @@ class Eval {
 
       if (this.isError(value)) return value;
 
-      const hashed = new obj.HashKey().hashkey(key);
+      const hashed = new obj.HashKey().hashkey(key).value;
       const pair = new obj.HashPair(key, value);
       pairs.set(hashed, pair);
     });
@@ -331,7 +331,7 @@ class Eval {
     }
   }
 
-  evalIndexExpression(arr: obj.Object, index: obj.Object): obj.Object {
+  evalArrayIndexExpression(arr: obj.Object, index: obj.Object): obj.Object {
     const { elements } = arr as obj.Array;
     const idx = (index as obj.Integer).value;
     const max = elements.length - 1;
@@ -339,6 +339,36 @@ class Eval {
     if (idx < 0 || idx > max) return NULL;
 
     return elements[idx];
+  }
+
+  evalHashIndexExpression(hash: obj.Object, index: obj.Object): obj.Object {
+    const { pairs } = hash as obj.Hash;
+
+    if (!HASHKEY.hashable(index)) {
+      return this.newError({ msg: `unusable as hash key: ${index.type()}` });
+    }
+
+    const key = new obj.HashKey().hashkey(index);
+
+    if (!pairs.get(key.value)) {
+      return NULL;
+    }
+
+    return pairs.get(key.value).value;
+  }
+
+  evalIndexExpression(left: obj.Object, index: obj.Object): obj.Object {
+    switch (true) {
+      case left.type() === obj.ObjectType.ARRAY_OBJ &&
+        index.type() === obj.ObjectType.INTEGER_OBJ:
+        return this.evalArrayIndexExpression(left, index);
+      case left.type() === obj.ObjectType.HASH_OBJ:
+        return this.evalHashIndexExpression(left, index);
+      default:
+        return this.newError({
+          msg: `index operator not supported: ${left.type()}`,
+        });
+    }
   }
 
   minusPrefixOperatorExpression(right: obj.Object): obj.Object {
