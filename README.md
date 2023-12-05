@@ -44,13 +44,11 @@ This interpreter employs a process of lexical analysis, parsing, and evaluation 
 
 The syntax embodies a rich spectrum of functionalities, managing mathematical expressions, variable assignments, function definitions, calls, conditionals, and returns. It adeptly handles concepts like higher-order functions and closures.
 
-Additionally, the interpreter accommodates diverse data types—integers, booleans, strings, arrays, and hashes.
+Additionally, the interpreter accommodates diverse data types — integers, booleans, strings, arrays, and hashes.
 
 It also features a set of built-in functions tailored to expedite string/array operations and console output logging.
 
-## Usage Example
-
-Here's a basic example illustrating the declaration and invocation of a function:
+## Usage Examples
 
 ```js
 >> let a = 2; // Declare a variable
@@ -59,6 +57,8 @@ Here's a basic example illustrating the declaration and invocation of a function
 >> let person = {"name": "Alice"}; // Declare a hash map
 >> person["name"]; // Access map
 ```
+
+Here's a basic example illustrating the declaration and invocation of a function:
 
 ```js
 >> let a = 2; // Declare a variable

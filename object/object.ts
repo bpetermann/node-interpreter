@@ -166,18 +166,20 @@ class HashKey {
     );
   }
 
-  hashkey(input: Object): HashKey {
-    const hashKey = new HashKey();
+  hashkey(input: Object): number {
+    // const hashKey = new HashKey();
     if (input.type() === ObjectType.BOOLEAN_OBJ) {
       const { value } = input as Boolean;
-      hashKey.objType = ObjectType.BOOLEAN_OBJ;
-      hashKey.value = value ? 1 : 0;
+      // hashKey.objType = ObjectType.BOOLEAN_OBJ;
+      // hashKey.value = value ? 1 : 0;
+      return value ? 1 : 0
     }
 
     if (input.type() === ObjectType.INTEGER_OBJ) {
       const { value } = input as Integer;
-      hashKey.objType = ObjectType.INTEGER_OBJ;
-      hashKey.value = value;
+      // hashKey.objType = ObjectType.INTEGER_OBJ;
+      // hashKey.value = value;
+      return value
     }
 
     if (input.type() === ObjectType.STRING_OBJ) {
@@ -189,11 +191,12 @@ class HashKey {
         hashString += charCode;
         hashString |= hashString;
       }
-      hashKey.objType = ObjectType.STRING_OBJ;
-      hashKey.value = hashString;
+      // hashKey.objType = ObjectType.STRING_OBJ;
+      // hashKey.value = hashString;
+      return hashString
     }
 
-    return hashKey;
+    // return hashKey;
   }
 }
 

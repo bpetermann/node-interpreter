@@ -102,7 +102,7 @@ it('should evaluate strings', () => {
   expect((actual as obj.Integer).value).toEqual(expected);
 });
 
-it('should evaluate strings', () => {
+it('should evaluate array literals', () => {
   const actual = parseAndEval(`[1, 2 * 2, 3 + 3];`);
 
   expect(cleanInspect(actual)).toEqual('[1,4,6]');
@@ -112,4 +112,19 @@ it('should evaluate index operator expressions', () => {
   const actual = parseAndEval(`[1, 2, 3][2];`);
 
   expect(cleanInspect(actual)).toEqual('3');
+});
+
+it('should evaluate hash literals', () => {
+  const actual = parseAndEval(`{false: "null", 1: 2-1, "two": "two"};`);
+
+  expect(cleanInspect(actual)).toEqual('{false: null, 1: 1, two: two}');
+});
+
+it('should evaluate hash index expressions', () => {
+  const actual = parseAndEval(
+    `let people = [{"first": "John", "last": "Doe"},{"first": "Jane", "last": "Doe"}]; people[0]["first"];`,
+    1
+  );
+
+  expect(cleanInspect(actual)).toEqual('John');
 });

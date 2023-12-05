@@ -139,7 +139,7 @@ class Eval {
 
       if (this.isError(value)) return value;
 
-      const hashed = new obj.HashKey().hashkey(key).value;
+      const hashed = HASHKEY.hashkey(key);
       const pair = new obj.HashPair(key, value);
       pairs.set(hashed, pair);
     });
@@ -348,13 +348,13 @@ class Eval {
       return this.newError({ msg: `unusable as hash key: ${index.type()}` });
     }
 
-    const key = new obj.HashKey().hashkey(index);
+    const key = HASHKEY.hashkey(index);
 
-    if (!pairs.get(key.value)) {
+    if (!pairs.get(key)) {
       return NULL;
     }
 
-    return pairs.get(key.value).value;
+    return pairs.get(key).value;
   }
 
   evalIndexExpression(left: obj.Object, index: obj.Object): obj.Object {
