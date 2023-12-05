@@ -126,23 +126,23 @@ class Eval {
   evalHashLiteral(node: ast.HashLiteral, env: obj.Env): obj.Object {
     const pairs = new Map();
 
-    node.pairs.forEach((valueNode, keyNode) => {
+    for (const [keyNode, valueNode] of node.pairs) {
       const key = this.evaluateNode(keyNode, env);
 
       if (this.isError(key)) return key;
 
       if (!HASHKEY.hashable(key)) {
-        return this.newError({ msg: `unusable as hash key: ${key.type()}` });
+        return this.newError({ type: 'unusable', msg: `${key.type()}` });
       }
 
       const value = this.evaluateNode(valueNode, env);
 
       if (this.isError(value)) return value;
 
-      const hashed = HASHKEY.hashkey(key);
+      const hash = HASHKEY.hash(key);
       const pair = new obj.HashPair(key, value);
-      pairs.set(hashed, pair);
-    });
+      pairs.set(hash, pair);
+    }
 
     return new obj.Hash(pairs);
   }
@@ -345,10 +345,10 @@ class Eval {
     const { pairs } = hash as obj.Hash;
 
     if (!HASHKEY.hashable(index)) {
-      return this.newError({ msg: `unusable as hash key: ${index.type()}` });
+      return this.newError({ type: 'unusable', msg: `${index.type()}` });
     }
 
-    const key = HASHKEY.hashkey(index);
+    const key = HASHKEY.hash(index);
 
     if (!pairs.get(key)) {
       return NULL;

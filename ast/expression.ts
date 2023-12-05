@@ -228,7 +228,7 @@ class HashLiteral implements Expression {
 
   getString(): string {
     const keyValues: string[] = [];
-    Array.from(this.pairs).map(([key, value]) =>
+    [...this.pairs].map(([key, value]) =>
       keyValues.push(`${key.getString()}: ${value.getString()}`)
     );
     return colors.magenta(`{${keyValues.join(', ')}}`);

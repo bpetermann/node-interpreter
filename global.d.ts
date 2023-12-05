@@ -11,5 +11,6 @@ declare global {
     | 'args'
     | 'expected'
     | 'parse'
+    | 'unusable'
     | 'debug';
 }

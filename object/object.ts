@@ -76,6 +76,10 @@ class Error implements Object {
         break;
       case 'args':
         this.message = `wrong number of arguments. got=${error.msg}, want=1`;
+        break;
+      case 'unusable':
+        this.message = `unusable as hash key: ${error.msg}`;
+        break;
       default:
         this.message = error.msg;
     }
@@ -155,9 +159,6 @@ class Array implements Object {
 }
 
 class HashKey {
-  objType: ObjectType;
-  value: number;
-
   public hashable(input: Object): boolean {
     return (
       input.type() === ObjectType.BOOLEAN_OBJ ||
@@ -166,37 +167,24 @@ class HashKey {
     );
   }
 
-  hashkey(input: Object): number {
-    // const hashKey = new HashKey();
-    if (input.type() === ObjectType.BOOLEAN_OBJ) {
-      const { value } = input as Boolean;
-      // hashKey.objType = ObjectType.BOOLEAN_OBJ;
-      // hashKey.value = value ? 1 : 0;
-      return value ? 1 : 0
+  public hash(input: Object): number {
+    switch (input.type()) {
+      case ObjectType.BOOLEAN_OBJ:
+        return (input as Boolean).value ? 1 : 0;
+      case ObjectType.INTEGER_OBJ:
+        return (input as Integer).value;
+      default:
+        return this.stringToHash((input as String).value);
     }
+  }
 
-    if (input.type() === ObjectType.INTEGER_OBJ) {
-      const { value } = input as Integer;
-      // hashKey.objType = ObjectType.INTEGER_OBJ;
-      // hashKey.value = value;
-      return value
-    }
-
-    if (input.type() === ObjectType.STRING_OBJ) {
-      const { value } = input as String;
-      let hashString = 0;
-      for (let character of value) {
-        let charCode = character.charCodeAt(0);
-        hashString = hashString << (5 - hashString);
-        hashString += charCode;
-        hashString |= hashString;
-      }
-      // hashKey.objType = ObjectType.STRING_OBJ;
-      // hashKey.value = hashString;
-      return hashString
-    }
-
-    // return hashKey;
+  private stringToHash(input: string): number {
+    return input
+      .split('')
+      .reduce(
+        (hash, char) => ((hash << (5 - hash)) + char.charCodeAt(0)) | hash,
+        0
+      );
   }
 }
 
@@ -231,7 +219,7 @@ class Hash implements Object {
 
   inspect(): string {
     const keyValues: string[] = [];
-    [...this.pairs].map(([_, value]) => keyValues.push(`${value.inspect()}`));
+    [...this.pairs].map(([_, value]) => keyValues.push(value.inspect()));
     return colors.magenta(`{${keyValues.join(', ')}}`);
   }
 }

@@ -120,6 +120,12 @@ it('should evaluate hash literals', () => {
   expect(cleanInspect(actual)).toEqual('{false: null, 1: 1, two: two}');
 });
 
+it('should return error if key is not hashable', () => {
+  const actual = parseAndEval(`{[]: "doe"};`);
+
+  expect(cleanInspect(actual)).toEqual('unusable as hash key: ARRAY');
+});
+
 it('should evaluate hash index expressions', () => {
   const actual = parseAndEval(
     `let people = [{"first": "John", "last": "Doe"},{"first": "Jane", "last": "Doe"}]; people[0]["first"];`,
@@ -127,4 +133,10 @@ it('should evaluate hash index expressions', () => {
   );
 
   expect(cleanInspect(actual)).toEqual('John');
+});
+
+it('should return unusable as hash key', () => {
+  const actual = parseAndEval(`{"name": "john"}[fn(x) { x }];`);
+
+  expect(cleanInspect(actual)).toEqual('unusable as hash key: FUNCTION');
 });
