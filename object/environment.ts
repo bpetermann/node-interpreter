@@ -45,4 +45,4 @@ class EnclosedEnvironment implements Env {
   }
 }
 
-export { Env, Environment, EnclosedEnvironment };
+export { Environment, EnclosedEnvironment };

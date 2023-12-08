@@ -1,9 +1,4 @@
-import { TokenType } from './types';
-
-type Token = {
-  type: TokenType;
-  literal: string;
-};
+import { TokenType, Token } from './types';
 
 const lookUpToken = (str: string) => {
   return (
@@ -26,4 +21,4 @@ const isTokenType = (
   return token.type === tokenType;
 };
 
-export { Token, lookUpToken, isTokenType };
+export { lookUpToken, isTokenType };

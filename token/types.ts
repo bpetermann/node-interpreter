@@ -36,6 +36,11 @@ enum TokenType {
   GT = '>',
 }
 
+type Token = {
+  type: TokenType;
+  literal: string;
+};
+
 enum WhiteSpace {
   WHITESPACE = ' ',
   TAB = '\t',
@@ -43,4 +48,4 @@ enum WhiteSpace {
   CARRIAGE_RETURN = '\r',
 }
 
-export { WhiteSpace, TokenType };
+export { WhiteSpace, TokenType, Token };
