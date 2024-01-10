@@ -1,5 +1,4 @@
-import { ErrorType } from '@types';
-import { Token } from '../token';
+import { ErrorType, Token } from '@types';
 
 type ErrorProps = {
   type?: ErrorType;

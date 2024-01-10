@@ -1,5 +1,5 @@
-import { TokenType } from '../lib/token';
 import { expect } from '@jest/globals';
+import { TokenType } from '../@types';
 import { Lexer } from '../lib/lexer';
 
 it('should create an array of tokens', () => {
@@ -20,7 +20,17 @@ it('should create an array of tokens', () => {
 });
 
 it('should create only valid tokens', () => {
-  const validTypes = Object.values(TokenType);
+  const validTypes = [
+    TokenType.ASSIGN,
+    TokenType.PLUS,
+    TokenType.LPAREN,
+    TokenType.RPAREN,
+    TokenType.LBRACE,
+    TokenType.RBRACE,
+    TokenType.COMMA,
+    TokenType.SEMICOLON,
+    TokenType.EOF,
+  ];
 
   const lexer = new Lexer('=+(){},;');
   const actual = lexer.tokens;
@@ -36,8 +46,6 @@ it('should create only valid tokens', () => {
 });
 
 it('should create only valid tokens', () => {
-  const validTypes = Object.values(TokenType);
-
   const lexer = new Lexer('=+(){},;');
   const actual = lexer.tokens;
 
@@ -52,14 +60,14 @@ it('should create only valid tokens', () => {
     { type: TokenType.RBRACE, literal: '}' },
     { type: TokenType.COMMA, literal: ',' },
     { type: TokenType.SEMICOLON, literal: ';' },
+    { type: TokenType.EOF, literal: '' },
   ];
 
-  expect(
-    actual.every(
-      (token) =>
-        token && typeof token === 'object' && validTypes.includes(token['type'])
-    )
-  ).toBe(true);
+  expect(actual.every((token) => token && typeof token === 'object')).toBe(
+    true
+  );
+
+  expect(actual).toEqual(expected);
 });
 
 it('should convert source code', () => {

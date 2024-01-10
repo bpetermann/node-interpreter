@@ -1,4 +1,4 @@
-enum TokenType {
+export const enum TokenType {
   ILLEGAL = 'ILLEGAL',
   EOF = 'EOF',
   // Identifiers + literals
@@ -36,16 +36,14 @@ enum TokenType {
   GT = '>',
 }
 
-type Token = {
+export type Token = {
   type: TokenType;
   literal: string;
 };
 
-enum WhiteSpace {
+export const enum WhiteSpace {
   WHITESPACE = ' ',
   TAB = '\t',
   NEWLINE = '\n',
   CARRIAGE_RETURN = '\r',
 }
-
-export { WhiteSpace, TokenType, Token };

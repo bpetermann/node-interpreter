@@ -1,6 +1,6 @@
 import { precedences } from '../lib/parser/helper';
-import { TokenType } from '../lib/token';
 import { expect } from '@jest/globals';
+import { TokenType } from '../@types';
 
 it('should map token types to numbers', () => {
   const eq = precedences(TokenType.EQ);

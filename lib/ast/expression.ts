@@ -1,5 +1,4 @@
-import { Expression, Statement } from '@types';
-import { Token } from '../token';
+import { Expression, Statement, Token } from '@types';
 import colors from 'colors';
 
 class IntegerLiteral implements Expression {

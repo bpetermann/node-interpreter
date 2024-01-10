@@ -1,4 +1,5 @@
-import { WhiteSpace, TokenType, Token, lookUpToken } from '../token';
+import { WhiteSpace, TokenType, Token } from '@types';
+import { lookUpToken } from '../token';
 
 export default class Lexer {
   private _tokens: Token[];

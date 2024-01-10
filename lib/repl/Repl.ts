@@ -1,5 +1,5 @@
 import { Environment } from '../object';
-import { TokenType } from '../token';
+import { TokenType } from '@types';
 import { Parser } from '../parser';
 import readline from 'readline';
 import { Eval } from '../eval';

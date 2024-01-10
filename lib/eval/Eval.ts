@@ -5,9 +5,9 @@ import {
   Object,
   Env,
   ObjectType,
+  TokenType,
 } from '@types';
 import { builtins } from './builtins';
-import { TokenType } from '../token';
 import * as obj from '../object';
 import * as ast from '../ast';
 

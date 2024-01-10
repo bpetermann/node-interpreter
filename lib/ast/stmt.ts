@@ -1,6 +1,5 @@
 import { Identifier, Expression } from './expression';
-import { Statement } from '@types';
-import { Token } from '../token';
+import { Statement, Token } from '@types';
 import colors from 'colors';
 
 class LetStatement implements Statement {
