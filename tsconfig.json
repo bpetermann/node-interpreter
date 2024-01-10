@@ -9,5 +9,6 @@
     "sourceMap": true,
     "outDir": "app"
   },
+  "exclude": ["tests"],
   "lib": ["es2015"]
 }
