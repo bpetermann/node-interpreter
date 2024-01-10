@@ -1,9 +1,10 @@
 import * as obj from '../object';
+import { Object } from '@types';
 
 const NULL = new obj.Null();
 
 const builtins = {
-  len: new obj.Builtin((...args: any): obj.Object => {
+  len: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -22,7 +23,7 @@ const builtins = {
     });
   }),
 
-  toLower: new obj.Builtin((...args: any): obj.Object => {
+  toLower: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -37,7 +38,7 @@ const builtins = {
     return new obj.String(args[0].value.toLowerCase());
   }),
 
-  toUpper: new obj.Builtin((...args: any): obj.Object => {
+  toUpper: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1) {
       return new obj.Error({
         type: 'args',
@@ -56,7 +57,7 @@ const builtins = {
     return new obj.String(args[0].value.toUpperCase());
   }),
 
-  first: new obj.Builtin((...args: any): obj.Object => {
+  first: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -70,7 +71,7 @@ const builtins = {
 
     return args[0].elements[0];
   }),
-  last: new obj.Builtin((...args: any): obj.Object => {
+  last: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -85,7 +86,7 @@ const builtins = {
     return elements[elements.length - 1];
   }),
 
-  rest: new obj.Builtin((...args: any): obj.Object => {
+  rest: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -103,7 +104,7 @@ const builtins = {
 
     return NULL;
   }),
-  push: new obj.Builtin((...args: any): obj.Object => {
+  push: new obj.Builtin((...args: any): Object => {
     if (args.length !== 2)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -118,7 +119,7 @@ const builtins = {
 
     return new obj.Array([...elements, args[1]]);
   }),
-  pop: new obj.Builtin((...args: any): obj.Object => {
+  pop: new obj.Builtin((...args: any): Object => {
     if (args.length !== 1)
       return new obj.Error({ type: 'args', msg: args.length });
 
@@ -135,8 +136,8 @@ const builtins = {
     return new obj.Array(elements);
   }),
 
-  log: new obj.Builtin((...args: any): obj.Object => {
-    args.map((arg: obj.Object) => console.log(arg.inspect()));
+  log: new obj.Builtin((...args: any): Object => {
+    args.map((arg: Object) => console.log(arg.inspect()));
 
     return NULL;
   }),

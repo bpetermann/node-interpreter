@@ -1,4 +1,11 @@
-import { NodeType, Statement, ErrorType } from '@types';
+import {
+  NodeType,
+  Statement,
+  ErrorType,
+  Object,
+  Env,
+  ObjectType,
+} from '@types';
 import { builtins } from './builtins';
 import { TokenType } from '../token';
 import * as obj from '../object';
@@ -10,7 +17,7 @@ const NULL = new obj.Null();
 const HASHKEY = new obj.HashKey();
 
 class Eval {
-  evaluate(program: ast.Program, env: obj.Environment): obj.Object[] {
+  evaluate(program: ast.Program, env: obj.Environment): Object[] {
     const results = [];
 
     for (const statement of program.statements) {
@@ -25,7 +32,7 @@ class Eval {
     return results;
   }
 
-  evaluateNode(node: NodeType, env: obj.Env): obj.Object {
+  evaluateNode(node: NodeType, env: Env): Object {
     switch (true) {
       case node instanceof ast.ExpressionStatement:
         return this.evaluateNode(
@@ -108,7 +115,7 @@ class Eval {
     }
   }
 
-  evalStatements(stmts: Statement[], env: obj.Env): obj.Object {
+  evalStatements(stmts: Statement[], env: Env): Object {
     let evaluatedResult = NULL;
 
     for (const stmt of stmts) {
@@ -124,7 +131,7 @@ class Eval {
     return evaluatedResult;
   }
 
-  evalHashLiteral(node: ast.HashLiteral, env: obj.Env): obj.Object {
+  evalHashLiteral(node: ast.HashLiteral, env: Env): Object {
     const pairs = new Map();
 
     for (const [keyNode, valueNode] of node.pairs) {
@@ -152,14 +159,14 @@ class Eval {
     return new obj.Error(error);
   }
 
-  isError(object: obj.Object): boolean {
+  isError(object: Object): boolean {
     if (object !== null) {
-      return object.type() === obj.ObjectType.ERROR_OBJ;
+      return object.type() === ObjectType.ERROR_OBJ;
     }
     return false;
   }
 
-  applyFunction(fn: obj.Object, args: obj.Object[]): obj.Object {
+  applyFunction(fn: Object, args: Object[]): Object {
     switch (true) {
       case fn instanceof obj.Func:
         const func = fn as obj.Func;
@@ -174,7 +181,7 @@ class Eval {
     }
   }
 
-  extendFunctionEnv(fn: obj.Func, args: obj.Object[]): obj.EnclosedEnvironment {
+  extendFunctionEnv(fn: obj.Func, args: Object[]): obj.EnclosedEnvironment {
     const env = new obj.EnclosedEnvironment(fn.env as obj.Environment);
 
     fn.parameters.map((param, idx) => env.set(param.value, args[idx]));
@@ -182,7 +189,7 @@ class Eval {
     return env;
   }
 
-  unwrapReturnValue(object: obj.Object): obj.Object {
+  unwrapReturnValue(object: Object): Object {
     if (object instanceof obj.ReturnValue) {
       return object.value;
     }
@@ -190,14 +197,14 @@ class Eval {
     return object;
   }
 
-  evalExpressions(exps: ast.Expression[], env: obj.Env): obj.Object[] {
+  evalExpressions(exps: ast.Expression[], env: Env): Object[] {
     const result = exps.map((exp) => this.evaluateNode(exp, env));
     const Error = result.find((result) => result instanceof obj.Error);
 
     return Error ? [Error] : result;
   }
 
-  evalIdentifier(node: ast.Identifier, env: obj.Env): obj.Object {
+  evalIdentifier(node: ast.Identifier, env: Env): Object {
     if (env.get(node.value)) {
       return env.get(node.value);
     }
@@ -209,7 +216,7 @@ class Eval {
     return this.newError({ type: 'identifier', msg: node.value });
   }
 
-  isTruthy(object: obj.Object): boolean {
+  isTruthy(object: Object): boolean {
     switch (object) {
       case NULL:
         return false;
@@ -222,7 +229,7 @@ class Eval {
     }
   }
 
-  evalIfExpression(expression: ast.IfExpression, env: obj.Env): obj.Object {
+  evalIfExpression(expression: ast.IfExpression, env: Env): Object {
     const condition = this.evaluateNode(expression.condition, env);
 
     if (this.isError(condition)) return condition;
@@ -242,9 +249,9 @@ class Eval {
 
   evalIntegerInfixExpression(
     operator: string,
-    left: obj.Object,
-    right: obj.Object
-  ): obj.Object {
+    left: Object,
+    right: Object
+  ): Object {
     const leftVal = (left as obj.Integer).value;
     const rightVal = (right as obj.Integer).value;
 
@@ -275,9 +282,9 @@ class Eval {
 
   evalStringInfixExpression(
     operator: string,
-    left: obj.Object,
-    right: obj.Object
-  ): obj.Object {
+    left: Object,
+    right: Object
+  ): Object {
     if (operator !== '+') {
       return this.newError({
         type: 'operator',
@@ -290,21 +297,17 @@ class Eval {
     return new obj.String(leftVal + rightVal);
   }
 
-  evalInfixExpression(
-    operator: string,
-    left: obj.Object,
-    right: obj.Object
-  ): obj.Object {
+  evalInfixExpression(operator: string, left: Object, right: Object): Object {
     switch (true) {
-      case left.type() === obj.ObjectType.INTEGER_OBJ &&
-        right.type() === obj.ObjectType.INTEGER_OBJ:
+      case left.type() === ObjectType.INTEGER_OBJ &&
+        right.type() === ObjectType.INTEGER_OBJ:
         return this.evalIntegerInfixExpression(operator, left, right);
       case operator == TokenType.EQ:
         return this.booleanToBooleanObject(left === right);
       case operator == TokenType.NOT_EQ:
         return this.booleanToBooleanObject(left !== right);
-      case left.type() === obj.ObjectType.STRING_OBJ &&
-        right.type() === obj.ObjectType.STRING_OBJ:
+      case left.type() === ObjectType.STRING_OBJ &&
+        right.type() === ObjectType.STRING_OBJ:
         return this.evalStringInfixExpression(operator, left, right);
       case left.type() !== right.type():
         return this.newError({
@@ -319,7 +322,7 @@ class Eval {
     }
   }
 
-  bangOperatorExpression(right: obj.Object): obj.Object {
+  bangOperatorExpression(right: Object): Object {
     switch (right) {
       case TRUE:
         return FALSE;
@@ -332,7 +335,7 @@ class Eval {
     }
   }
 
-  evalArrayIndexExpression(arr: obj.Object, index: obj.Object): obj.Object {
+  evalArrayIndexExpression(arr: Object, index: Object): Object {
     const { elements } = arr as obj.Array;
     const idx = (index as obj.Integer).value;
     const max = elements.length - 1;
@@ -342,7 +345,7 @@ class Eval {
     return elements[idx];
   }
 
-  evalHashIndexExpression(hash: obj.Object, index: obj.Object): obj.Object {
+  evalHashIndexExpression(hash: Object, index: Object): Object {
     const { pairs } = hash as obj.Hash;
 
     if (!HASHKEY.hashable(index)) {
@@ -358,12 +361,12 @@ class Eval {
     return pairs.get(key).value;
   }
 
-  evalIndexExpression(left: obj.Object, index: obj.Object): obj.Object {
+  evalIndexExpression(left: Object, index: Object): Object {
     switch (true) {
-      case left.type() === obj.ObjectType.ARRAY_OBJ &&
-        index.type() === obj.ObjectType.INTEGER_OBJ:
+      case left.type() === ObjectType.ARRAY_OBJ &&
+        index.type() === ObjectType.INTEGER_OBJ:
         return this.evalArrayIndexExpression(left, index);
-      case left.type() === obj.ObjectType.HASH_OBJ:
+      case left.type() === ObjectType.HASH_OBJ:
         return this.evalHashIndexExpression(left, index);
       default:
         return this.newError({
@@ -372,15 +375,15 @@ class Eval {
     }
   }
 
-  minusPrefixOperatorExpression(right: obj.Object): obj.Object {
-    if (right.type() !== obj.ObjectType.INTEGER_OBJ) {
+  minusPrefixOperatorExpression(right: Object): Object {
+    if (right.type() !== ObjectType.INTEGER_OBJ) {
       return this.newError({ type: 'operator', msg: `-${right.type()}` });
     }
     const value = (right as obj.Integer).value;
     return new obj.Integer(-value);
   }
 
-  evalPrefixExpression(operator: string, right: obj.Object): obj.Object {
+  evalPrefixExpression(operator: string, right: Object): Object {
     switch (operator) {
       case TokenType.BANG:
         return this.bangOperatorExpression(right);

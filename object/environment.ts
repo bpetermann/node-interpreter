@@ -1,5 +1,4 @@
-import { Object } from './index';
-import { Env } from './types';
+import { Object, Env } from '@types';
 
 class Environment implements Env {
   private store: { [k: string]: Object };

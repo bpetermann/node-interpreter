@@ -1,4 +1,5 @@
-import { Object, Environment } from '../object';
+import { Environment } from '../object';
+import { Object } from '../@types';
 import { Parser } from '../parser';
 import { Program } from '../ast';
 import { Eval } from '../eval';

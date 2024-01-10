@@ -1,7 +1,5 @@
-import { Statement, ErrorType } from '@types';
-import { ObjectType, Object } from './types';
+import { Statement, ErrorType, Env, ObjectType, Object } from '@types';
 import { Identifier } from 'ast';
-import { Env } from './types';
 import colors from 'colors';
 
 class Integer implements Object {

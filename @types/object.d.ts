@@ -1,9 +1,9 @@
-interface Env {
+export interface Env {
   get: (name: string) => Object;
   set: (name: string, val: Object) => Object;
 }
 
-enum ObjectType {
+export const enum ObjectType {
   INTEGER_OBJ = 'INTEGER',
   BOOLEAN_OBJ = 'BOOLEAN',
   NULL_OBJ = 'NULL',
@@ -13,12 +13,10 @@ enum ObjectType {
   STRING_OBJ = 'STRING',
   BUILTIN_OBJ = 'BUILTIN',
   ARRAY_OBJ = 'ARRAY',
-  HASH_OBJ = "HASH"
+  HASH_OBJ = 'HASH',
 }
 
-interface Object {
+export interface Object {
   type: () => ObjectType;
   inspect: () => string;
 }
-
-export { Env, ObjectType, Object };
