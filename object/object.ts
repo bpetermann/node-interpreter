@@ -1,5 +1,5 @@
+import { Statement, ErrorType } from '@types';
 import { ObjectType, Object } from './types';
-import { Statement } from '@types';
 import { Identifier } from 'ast';
 import { Env } from './types';
 import colors from 'colors';

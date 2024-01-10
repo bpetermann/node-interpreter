@@ -1,3 +1,4 @@
+import { ErrorType } from '@types';
 import { Token } from '../token';
 
 type ErrorProps = {

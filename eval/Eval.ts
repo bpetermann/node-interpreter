@@ -1,4 +1,4 @@
-import { NodeType, Statement } from '@types';
+import { NodeType, Statement, ErrorType } from '@types';
 import { builtins } from './builtins';
 import { TokenType } from '../token';
 import * as obj from '../object';
