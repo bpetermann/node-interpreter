@@ -1,4 +1,4 @@
-import Repl from './repl/Repl';
+import { Repl } from './lib/repl';
 
 const repl = new Repl();
 repl.start();

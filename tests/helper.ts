@@ -1,8 +1,8 @@
-import { Environment } from '../object';
+import { Environment } from '../lib/object';
+import { Parser } from '../lib/parser';
+import { Program } from '../lib/ast';
 import { Object } from '../@types';
-import { Parser } from '../parser';
-import { Program } from '../ast';
-import { Eval } from '../eval';
+import { Eval } from '../lib/eval';
 
 const cleanInspect = (obj: Object) => {
   return obj.inspect().replace(/\x1B\[[0-9;]*m/g, '');

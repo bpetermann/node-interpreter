@@ -1,6 +1,6 @@
 import { parseAndEval, cleanInspect } from './helper';
 import { expect } from '@jest/globals';
-import * as obj from '../object';
+import * as obj from '../lib/object';
 
 it('should evaluate integer literal', () => {
   const actual = parseAndEval(`5`);

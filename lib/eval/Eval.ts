@@ -16,7 +16,7 @@ const FALSE = new obj.Boolean(false);
 const NULL = new obj.Null();
 const HASHKEY = new obj.HashKey();
 
-class Eval {
+export default class Eval {
   evaluate(program: ast.Program, env: obj.Environment): Object[] {
     const results = [];
 
@@ -397,5 +397,3 @@ class Eval {
     }
   }
 }
-
-export { Eval };

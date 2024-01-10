@@ -4,6 +4,7 @@ import { Parser } from '../parser';
 import readline from 'readline';
 import { Eval } from '../eval';
 import colors from 'colors';
+
 export default class Repl {
   rl: readline.Interface;
   private eval: Eval;

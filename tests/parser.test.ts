@@ -1,7 +1,7 @@
 import { parse, cleanStmt } from './helper';
 import { expect } from '@jest/globals';
-import { Parser } from '../parser';
-import * as ast from '../ast';
+import { Parser } from '../lib/parser';
+import * as ast from '../lib/ast';
 
 it('should parse input to statements', () => {
   const actual = parse(`
@@ -171,5 +171,7 @@ it('should parse hash literals with expressions', () => {
   expect(stmt.expression).toBeInstanceOf(ast.HashLiteral);
 
   const hash = stmt.expression as ast.HashLiteral;
-  expect(cleanStmt(hash.getString())).toBe('{one: (0 + 1), two: (10 - 8), three: (15 / 5)}');
+  expect(cleanStmt(hash.getString())).toBe(
+    '{one: (0 + 1), two: (10 - 8), three: (15 / 5)}'
+  );
 });

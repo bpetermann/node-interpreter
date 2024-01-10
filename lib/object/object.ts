@@ -1,5 +1,5 @@
 import { Statement, ErrorType, Env, ObjectType, Object } from '@types';
-import { Identifier } from 'ast';
+import { Identifier } from 'lib/ast';
 import colors from 'colors';
 
 class Integer implements Object {
