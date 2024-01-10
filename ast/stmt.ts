@@ -1,5 +1,5 @@
 import { Identifier, Expression } from './expression';
-import { Statement } from './types';
+import { Statement } from '@types';
 import { Token } from '../token';
 import colors from 'colors';
 

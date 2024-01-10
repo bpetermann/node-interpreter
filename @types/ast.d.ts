@@ -1,17 +1,17 @@
-interface NodeType {
+export interface NodeType {
   getString(): string;
   tokenLiteral(): string;
 }
 
-interface Statement extends NodeType {
+export interface Statement extends NodeType {
   statementNode: () => void;
 }
 
-interface Expression extends NodeType {
+export interface Expression extends NodeType {
   expressionNode: () => void;
 }
 
-enum ExpressionType {
+export const enum ExpressionType {
   LOWEST,
   EQUALS,
   LESSGREATER,
@@ -22,5 +22,3 @@ enum ExpressionType {
   CALL,
   INDEX,
 }
-
-export { NodeType, Statement, ExpressionType, Expression };

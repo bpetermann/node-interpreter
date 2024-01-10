@@ -1,4 +1,4 @@
-import { ExpressionType } from '../ast';
+import { ExpressionType } from '@types';
 import { TokenType } from '../token';
 
 const precedences = (type: TokenType): number => {

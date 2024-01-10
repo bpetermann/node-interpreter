@@ -1,5 +1,6 @@
 import { ObjectType, Object } from './types';
-import { Statement, Identifier } from 'ast';
+import { Statement } from '@types';
+import { Identifier } from 'ast';
 import { Env } from './types';
 import colors from 'colors';
 

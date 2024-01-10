@@ -1,3 +1,4 @@
+import { NodeType, Statement } from '@types';
 import { builtins } from './builtins';
 import { TokenType } from '../token';
 import * as obj from '../object';
@@ -24,7 +25,7 @@ class Eval {
     return results;
   }
 
-  evaluateNode(node: ast.NodeType, env: obj.Env): obj.Object {
+  evaluateNode(node: NodeType, env: obj.Env): obj.Object {
     switch (true) {
       case node instanceof ast.ExpressionStatement:
         return this.evaluateNode(
@@ -107,7 +108,7 @@ class Eval {
     }
   }
 
-  evalStatements(stmts: ast.Statement[], env: obj.Env): obj.Object {
+  evalStatements(stmts: Statement[], env: obj.Env): obj.Object {
     let evaluatedResult = NULL;
 
     for (const stmt of stmts) {

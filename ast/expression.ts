@@ -1,4 +1,4 @@
-import { Expression, Statement } from './types';
+import { Expression, Statement } from '@types';
 import { Token } from '../token';
 import colors from 'colors';
 

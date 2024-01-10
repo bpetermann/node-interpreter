@@ -1,4 +1,4 @@
-import { NodeType, Statement } from './types';
+import { NodeType, Statement } from '@types';
 
 class Program implements NodeType {
   private _statements: Statement[];
