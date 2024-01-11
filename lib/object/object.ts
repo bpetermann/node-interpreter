@@ -1,4 +1,4 @@
-import { Statement, ErrorType, Env, ObjectType, Object } from '@types';
+import { Statement, ErrorType, Env, ObjectType, Object } from '../../types';
 import { Identifier } from 'lib/ast';
 import colors from 'colors';
 

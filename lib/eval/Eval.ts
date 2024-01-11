@@ -6,7 +6,7 @@ import {
   Env,
   ObjectType,
   TokenType,
-} from '@types';
+} from '../../types';
 import { builtins } from './builtins';
 import * as obj from '../object';
 import * as ast from '../ast';

@@ -1,4 +1,4 @@
-import { Token, TokenType, ExpressionType } from '@types';
+import { Token, TokenType, ExpressionType } from '../../types';
 import { precedences } from './helper';
 import { isTokenType } from '../token';
 import { Lexer } from '../lexer';

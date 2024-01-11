@@ -1,4 +1,4 @@
-import { TokenType, Token } from '@types';
+import { TokenType, Token } from '../../types';
 
 const lookUpToken = (str: string) => {
   return (

@@ -1,4 +1,4 @@
-export const enum TokenType {
+export enum TokenType {
   ILLEGAL = 'ILLEGAL',
   EOF = 'EOF',
   // Identifiers + literals
@@ -41,7 +41,7 @@ export type Token = {
   literal: string;
 };
 
-export const enum WhiteSpace {
+export enum WhiteSpace {
   WHITESPACE = ' ',
   TAB = '\t',
   NEWLINE = '\n',

@@ -1,5 +1,5 @@
+import { Object } from '../../types';
 import * as obj from '../object';
-import { Object } from '@types';
 
 const NULL = new obj.Null();
 

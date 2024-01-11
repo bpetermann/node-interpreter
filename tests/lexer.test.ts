@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { TokenType } from '../@types';
+import { TokenType } from '../types';
 import { Lexer } from '../lib/lexer';
 
 it('should create an array of tokens', () => {
@@ -20,17 +20,7 @@ it('should create an array of tokens', () => {
 });
 
 it('should create only valid tokens', () => {
-  const validTypes = [
-    TokenType.ASSIGN,
-    TokenType.PLUS,
-    TokenType.LPAREN,
-    TokenType.RPAREN,
-    TokenType.LBRACE,
-    TokenType.RBRACE,
-    TokenType.COMMA,
-    TokenType.SEMICOLON,
-    TokenType.EOF,
-  ];
+  const validTypes = Object.values(TokenType);
 
   const lexer = new Lexer('=+(){},;');
   const actual = lexer.tokens;
@@ -49,8 +39,6 @@ it('should create only valid tokens', () => {
   const lexer = new Lexer('=+(){},;');
   const actual = lexer.tokens;
 
-  expect(Array.isArray(actual)).toBe(true);
-
   const expected = [
     { type: TokenType.ASSIGN, literal: '=' },
     { type: TokenType.PLUS, literal: '+' },
@@ -62,10 +50,6 @@ it('should create only valid tokens', () => {
     { type: TokenType.SEMICOLON, literal: ';' },
     { type: TokenType.EOF, literal: '' },
   ];
-
-  expect(actual.every((token) => token && typeof token === 'object')).toBe(
-    true
-  );
 
   expect(actual).toEqual(expected);
 });

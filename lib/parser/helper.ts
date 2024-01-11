@@ -1,4 +1,4 @@
-import { ExpressionType, TokenType } from '@types';
+import { ExpressionType, TokenType } from '../../types';
 
 const precedences = (type: TokenType): number => {
   return (
