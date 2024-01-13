@@ -1,6 +1,6 @@
 # Node Interpreter
 
-A Node/Typescript interpreter, based of the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
+A Node/Typescript interpreter, based on the excellent book ["Writing An Interpreter In Go"](https://interpreterbook.com/)
 
 ## Installation
 
