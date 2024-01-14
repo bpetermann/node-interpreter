@@ -50,13 +50,7 @@ class ReturnValue implements Object {
 
 class Error implements Object {
   message: string;
-  constructor(
-    public error: {
-      type?: ErrorType;
-      msg?: string;
-      got?: string;
-    }
-  ) {
+  constructor(public error: ErrorType) {
     switch (error.type) {
       case 'mismatch':
         this.message = `type mismatch: ${error.msg}`;

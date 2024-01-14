@@ -104,10 +104,16 @@ export default class Parser {
     if (isTokenType(this.peekToken, t)) {
       this.nextToken();
       return true;
-    } else {
-      this._errors.push(setError({ expected: t, got: this.peekToken }));
-      return false;
     }
+
+    this._errors.push(
+      setError({
+        type: 'expected',
+        expected: t,
+        got: (this.peekToken as Token).literal,
+      })
+    );
+    return false;
   }
 
   parseLetStatement(): ast.LetStatement | null {
@@ -389,7 +395,9 @@ export default class Parser {
     const prefix = this.prefixParseFns[this.curToken?.type];
 
     if (!prefix) {
-      this._errors.push(setError({ type: 'parse', got: this.curToken }));
+      this._errors.push(
+        setError({ type: 'parse', got: this.curToken.literal })
+      );
       return null;
     }
 

@@ -155,7 +155,7 @@ export default class Eval {
     return new obj.Hash(pairs);
   }
 
-  newError(error: { type?: ErrorType; msg?: string }): obj.Error {
+  newError(error: ErrorType): obj.Error {
     return new obj.Error(error);
   }
 
@@ -370,6 +370,7 @@ export default class Eval {
         return this.evalHashIndexExpression(left, index);
       default:
         return this.newError({
+          type: 'undefined',
           msg: `index operator not supported: ${left.type()}`,
         });
     }

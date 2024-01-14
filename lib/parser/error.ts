@@ -1,20 +1,13 @@
-import { ErrorType, Token } from '../../types';
+import { ErrorType } from '../../types';
 
-type ErrorProps = {
-  type?: ErrorType;
-  expected?: string;
-  msg?: string;
-  got: Token;
-};
-
-const setError = ({ type, expected, msg, got }: ErrorProps) => {
-  switch (type) {
+const setError = (err: ErrorType) => {
+  switch (err.type) {
     case 'parse':
-      return `no prefix parse function for "${got.literal}" found`;
+      return `no prefix parse function for "${err.got}" found`;
     case 'debug':
-      return msg;
+      return err.msg;
     default:
-      return `expected next token to be "${expected}" got "${got.literal}" instead`;
+      return `expected next token to be "${err.expected}" got "${err.got}" instead`;
   }
 };
 
