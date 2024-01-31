@@ -23,7 +23,7 @@ class BooleanLiteral implements Expression {
   value: boolean;
 
   constructor(public token: Token) {
-    this.value = !!token.literal;
+    this.value = token.literal === 'true' ? true : false;
   }
 
   expressionNode: () => void;
