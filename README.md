@@ -16,7 +16,7 @@ cd node-interpreter
 Then, install dependencies and build the project:
 
 ```js
-npm run fresh // Installs dependencies and builds the project
+npm run build:fresh // Installs dependencies and builds the project
 ```
 
 ## 🚀 Start
