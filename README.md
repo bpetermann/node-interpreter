@@ -31,7 +31,7 @@ npm run start // Starts the REPL
 
 ```js
 >> let a = 2; // Declare a variable
->> let baz = ["foo", "bar"]; // Declare a array
+>> let baz = ["foo", "bar"]; // Declare an array
 >> baz[0]; // Acesss array
 >> let person = {"name": "Alice"}; // Declare a hash map
 >> person["name"]; // Access map
